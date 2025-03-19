@@ -1,0 +1,7 @@
+connexion[flask]
+connexion[uvicorn]
+connexion[swagger-ui]
+sqlalchemy
+mysqlclient
+pykafka
+python-dateutil

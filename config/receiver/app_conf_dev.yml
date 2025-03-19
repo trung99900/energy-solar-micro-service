@@ -1,0 +1,16 @@
+# version: 1  
+# events:  
+#   energy-consumption:  
+#     # url: http://localhost:8090/events/energy-consumption  
+#     topic: events
+#   solar-generation:  
+#     # url: http://localhost:8090/events/solar-generation
+#     topic: events
+#   hostname: localhost
+#   port: 9092
+
+version: 1
+events:
+  hostname: kafka
+  port: 9092
+  topic: events

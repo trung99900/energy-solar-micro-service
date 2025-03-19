@@ -1,0 +1,20 @@
+{
+    "num_energy": 1,
+    "recent_energy": [
+        {
+            "msg_data": "Device 123e4567-e89b-12d3-a456-426614174000 reported energy data.",
+            "received_timestamp": "2025-01-22 12:46:15.862992"
+        }
+    ],
+    "num_solar": 2,
+    "recent_solar": [
+        {
+            "msg_data": "Device 123e4567-e89b-12d3-a456-426614174000 reported solar data.",
+            "received_timestamp": "2025-01-22 12:46:15.885148"
+        },
+        {
+            "msg_data": "Device 123e4567-e89b-12d3-a456-426614174000 reported solar data.",
+            "received_timestamp": "2025-01-22 12:46:15.841342"
+        }
+    ]
+}

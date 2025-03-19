@@ -1,0 +1,163 @@
+openapi: 3.0.0
+info:
+  title: Audit API
+  description: This API provides audit info
+  contact:
+    email: tnguyen571@my.bcit.ca
+  version: 1.0.0
+paths:
+  /events/energy-consumption:
+    get:
+      summary: Retrieve an energy consumption event by index
+      operationId: app.getEnergyConsumptionEvent
+      description: Returns the energy consumption event located at the specified index in the Kafka queue.
+      parameters:
+        - name: index
+          in: query
+          description: Gets the BP at the index in the event store
+          schema:
+            type: integer
+            example: 10
+      responses:
+        '200':
+          description: Successfully retrieved the energy consumption event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnergyConsumptionEvent'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+        '404':
+          description: Event not found at the specified index
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /events/solar-generation:
+    get:
+      tags:
+        - Solar Generation Events
+      summary: Retrieve a solar generation event by index
+      description: Returns the solar generation event located at the specified index in the Kafka queue.
+      operationId: app.getSolarGenerationEvent
+      parameters:
+        - name: index
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+            description: The index of the solar generation event in the Kafka queue
+      responses:
+        '200':
+          description: Successfully retrieved the solar generation event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SolarGenerationEvent'
+        '404':
+          description: Event not found at the specified index
+  /stats:
+    get:
+      summary: Retrieve event statistics
+      operationId: app.getEventStats
+      description: Gets the stats of the history events
+      responses:
+        '200':
+          description: Successfully retrieved statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventStats'
+components:
+  schemas:
+    EnergyConsumptionEvent:
+      type: object
+      required:
+        - device_id
+        - timestamp
+        - energy_consumed
+        - voltage
+        - trace_id
+      properties:
+        device_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the device sending the event
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        timestamp:
+          type: string
+          format: date-time
+          description: The time the event occurred, in ISO 8601 format
+          example: "2025-02-23T12:00:00Z"
+        energy_consumed:
+          type: number
+          format: float
+          description: The amount of energy consumed in kilowatt-hours (kWh)
+          example: 5.2
+        voltage:
+          type: number
+          format: float
+          description: The voltage level recorded by the device (in volts)
+          example: 230.5
+        trace_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the trace
+          example: "123e4567-e89b-12d3-a456-426614174000"
+    SolarGenerationEvent:
+      type: object
+      required:
+        - device_id
+        - timestamp
+        - power_generated
+        - temperature
+        - trace_id
+      properties:
+        device_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the device sending the event
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        timestamp:
+          type: string
+          format: date-time
+          description: The time the event occurred, in ISO 8601 format
+          example: "2025-02-23T12:00:00Z"
+        power_generated:
+          type: number
+          format: float
+          description: The amount of solar power generated in kilowatt-hours (kWh)
+          example: 8.7
+        temperature:
+          type: number
+          format: float
+          description: The temperature of the solar inverter in degrees Celsius
+          example: 45.3
+        trace_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the trace
+          example: "123e4567-e89b-12d3-a456-426614174000"
+    EventStats:
+      type: object  
+      properties:  
+        num_energy_consumption:  
+          type: integer  
+          description: Number of energy consumption events  
+          example: 100  
+        num_solar_generation:  
+          type: integer  
+          description: Number of solar generation events  
+          example: 50

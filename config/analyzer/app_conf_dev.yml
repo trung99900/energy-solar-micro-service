@@ -1,0 +1,17 @@
+version: 1  
+datastore:  
+  user: huutrung  
+  password: 123456  
+  # hostname: db #use the service name in the docker-compose file  
+  port: 3306  
+  db: lab04_ConfigLogging
+
+# kafka:  
+#   broker: localhost:9092 #use the service name in the docker-compose file
+#   topics:
+#     energy_consumption: events
+#     solar_generation: events
+events:  
+  hostname: kafka
+  port: 9092  
+  topic: events
