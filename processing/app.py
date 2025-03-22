@@ -4,11 +4,11 @@ import requests, json, logging.config, yaml, os, connexion, httpx
 from datetime import datetime  
 
 # Load configuration  
-with open('config/app_conf.yml', 'r') as f:  
+with open('config/app_conf_dev.yml', 'r') as f:  
     app_config = yaml.safe_load(f)  
 
 # Logging setup  
-with open('config/log_conf.yml', 'r') as f:  
+with open('config/log_conf_dev.yml', 'r') as f:  
     log_config = yaml.safe_load(f.read())  
     logging.config.dictConfig(log_config)  
 

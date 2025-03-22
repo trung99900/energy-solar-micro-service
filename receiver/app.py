@@ -6,10 +6,10 @@ from pykafka import KafkaClient
 # MAX_EVENTS = 5  
 # EVENT_FILE = "events.json"
 
-with open('config/app_conf.yml', 'r') as f:  
+with open('config/app_conf_dev.yml', 'r') as f:  
     app_config = yaml.safe_load(f.read())
 
-with open('config/log_conf.yml', 'r') as f:  
+with open('config/log_conf_dev.yml', 'r') as f:  
     log_config = yaml.safe_load(f.read())  
     logging.config.dictConfig(log_config)  
     

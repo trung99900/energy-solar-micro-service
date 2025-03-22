@@ -1,15 +1,15 @@
-version: 1  
+version: 1
 
-datastore:  
-  filename: data/processing.json  
+datastore:
+  filename: data/processing.json
 
-scheduler:  
+scheduler:
   interval: 3
 
-eventstores:  
-  energy_consumption:  
+eventstores:
+  energy_consumption:
     # url: http://localhost:8090/events/energy-consumption 
-    url: http://storage:8090/events/energy-consumption 
+    url: http://storage:8090/events/energy-consumption
   solar_generation:  
     # url: http://localhost:8090/events/solar-generation
     url: http://storage:8090/events/solar-generation

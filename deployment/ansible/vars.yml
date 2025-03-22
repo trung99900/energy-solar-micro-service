@@ -1,0 +1,5 @@
+repo_url: "git@github.com:trung99900/energy-solar-micro-service.git"  
+repo_branch: "main"
+ssh_key: "~/.ssh/energy-solar-deploy-key"
+# Target username and paths  
+ansible_user: "ubuntu"

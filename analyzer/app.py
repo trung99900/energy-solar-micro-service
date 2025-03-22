@@ -4,11 +4,11 @@ from pykafka import KafkaClient
 # from sqlalchemy import create_engine, select
 
 # Load the configuration from app_conf.yml  
-with open('config/app_conf.yml', 'r') as f:  
+with open('config/app_conf_dev.yml', 'r') as f:  
     app_config = yaml.safe_load(f.read())  
 
 # Configure logging  
-with open('config/log_conf.yml', 'r') as f:  
+with open('config/log_conf_dev.yml', 'r') as f:  
     log_config = yaml.safe_load(f.read())  
     logging.config.dictConfig(log_config)  
 
