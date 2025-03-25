@@ -3,6 +3,19 @@ from flask import jsonify
 from pykafka import KafkaClient
 # from sqlalchemy import create_engine, select
 
+# from connexion.middleware import MiddlewarePosition
+# from starlette.middleware.cors import CORSMiddleware
+
+# app = FlaskApp(__name__)
+# app.add_middleware(
+# CORSMiddleware,
+# position=MiddlewarePosition.BEFORE_EXCEPTION,
+# allow_origins=["*"],
+# allow_credentials=True,
+# allow_methods=["*"],
+# allow_headers=["*"],
+# )
+
 # Load the configuration from app_conf.yml  
 with open('config/app_conf_dev.yml', 'r') as f:  
     app_config = yaml.safe_load(f.read())  
