@@ -84,13 +84,15 @@ services:
       - ./logs:/logs
       - ./config/analyzer:/app/config
   
-  # dashboard:
-  #   build:
-  #     context: ./dashboard
-  #   ports:
-  #   - "80:80"
+  dashboard:
+    build:
+      context: ./dashboard
+    ports:
+    - "80:80"
+    restart: always
 
 # Defines a named volume my-db
 volumes:
   my-db:
   zookeeper:
+  db-data:
