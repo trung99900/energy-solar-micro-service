@@ -82,25 +82,32 @@
 
     ### Application Deployment Tasks ###  
 
-    # # Task 8: Clone the Git repository
+    - name: Ensure GitHub is a known host
+      known_hosts:
+        name: github.com
+        key: "{{ lookup('pipe', 'ssh-keyscan -t ed25519 github.com') }}"
+        path: /home/ubuntu/.ssh/known_hosts
+        state: present
+
+    # Task 8: Clone the Git repository and other setup tasks
     - name: Clone the microservices repository
       git:  
         repo: "{{ repo_url }}"
-        dest: "/home/{{ ansible_user }}/acit3855-lab09"
+        dest: "/home/{{ ansible_user }}/energy-solar-micro-service"
         version: "{{ repo_branch }}"
-        key_file: "{{ ssh_key }}"
+        key_file: /home/ubuntu/.ssh/id_ed25519
         force: yes
     
     - name: Create logs directory
       file:
-        path: /home/ubuntu/acit3855-lab0/logs
+        path: /home/ubuntu/energy-solar-micro-service/logs
         state: directory
         mode: '0777'
 
     - name: Create log files for services
       copy:
         content: ""
-        dest: "/home/ubuntu/acit3855-lab09/logs/{{ item }}"
+        dest: "/home/ubuntu/energy-solar-micro-service/logs/{{ item }}"
         mode: '0666'
       loop:
         - receiver.log
@@ -110,7 +117,7 @@
 
     - name: Create processing folder if not exists
       file:
-        path: /home/ubuntu/acit3855-lab09/data/processing
+        path: /home/ubuntu/energy-solar-micro-service/data/processing
         state: directory
         mode: '0777'
 
@@ -124,14 +131,14 @@
             "max_power_generated": 0,
             "last_updated": "2025-03-21T13:21:58Z"
           }
-        dest: /home/ubuntu/acit3855-lab09/data/processing/processing.json
+        dest: /home/ubuntu/energy-solar-micro-service/data/processing/processing.json
         mode: '0666'
 
     # Task 9: Start the microservices using Docker Compose  
     - name: Start microservices using Docker Compose
       shell: docker-compose up -d
       args:
-        chdir: "/home/{{ ansible_user }}/acit3855-lab09"
+        chdir: "/home/{{ ansible_user }}/energy-solar-micro-service"
 
 
     
