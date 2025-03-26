@@ -137,7 +137,7 @@
     # Ensure the Required SQL Files Are Present
     - name: Copy database initialization script  
       copy:  
-        src: ./data/database/create_tables.sql  
+        src: ../../data/database/create_tables.sql
         dest: /home/{{ ansible_user }}/energy-solar-micro-service/data/database/create_tables.sql  
         owner: ubuntu  
         group: ubuntu  
