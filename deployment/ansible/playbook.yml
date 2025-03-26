@@ -42,13 +42,6 @@
         state: present
         keyring: /etc/apt/keyrings/docker.gpg
     
-    
-    # Task 3: Add Docker repository  
-    # - name: Add Docker repository to apt
-    #   apt_repository:
-    #     repo: deb https://download.docker.com/linux/ubuntu bionic stable
-    #     state: present
-
     # Task 4: Add Docker repository
     # Since Docker hasn’t provided official support for Ubuntu 24.04 (Noble Numbat), We can forcibly "trick" Docker's repository into using the configuration for the latest supported version (e.g., jammy for Ubuntu 22.04).
 
@@ -89,32 +82,57 @@
 
     ### Application Deployment Tasks ###  
 
-    # # Task 8: Clone the Git repository (if required)  
-    # - name: Clone the microservices repository
-    #   git:  
-    #     repo: "{{ repo_url }}"  
-    #     dest: "/home/{{ ansible_user }}/microservices"  
-    #     version: "{{ repo_branch }}"  
-    #     key_file: "{{ ssh_key }}"  
-    #     force: yes  
+    # # Task 8: Clone the Git repository
+    - name: Clone the microservices repository
+      git:  
+        repo: "{{ repo_url }}"
+        dest: "/home/{{ ansible_user }}/acit3855-lab09"
+        version: "{{ repo_branch }}"
+        key_file: "{{ ssh_key }}"
+        force: yes
+    
+    - name: Create logs directory
+      file:
+        path: /home/ubuntu/acit3855-lab0/logs
+        state: directory
+        mode: '0777'
+
+    - name: Create log files for services
+      copy:
+        content: ""
+        dest: "/home/ubuntu/acit3855-lab09/logs/{{ item }}"
+        mode: '0666'
+      loop:
+        - receiver.log
+        - storage.log
+        - analyzer.log
+        - processing.log
+
+    - name: Create processing folder if not exists
+      file:
+        path: /home/ubuntu/acit3855-lab09/data/processing
+        state: directory
+        mode: '0777'
+
+    - name: Create processing.json with default stats
+      copy:
+        content: |
+          {
+            "num_energy_events": 0,
+            "max_energy_consumed": 0,
+            "num_solar_events": 0,
+            "max_power_generated": 0,
+            "last_updated": "2025-03-21T13:21:58Z"
+          }
+        dest: /home/ubuntu/acit3855-lab09/data/processing/processing.json
+        mode: '0666'
 
     # Task 9: Start the microservices using Docker Compose  
-    # - name: Start microservices using Docker Compose
-    #   shell: docker-compose up -d
-    #   args:
-    #     chdir: "/home/{{ ansible_user }}/microservices"
+    - name: Start microservices using Docker Compose
+      shell: docker-compose up -d
+      args:
+        chdir: "/home/{{ ansible_user }}/acit3855-lab09"
 
-    # Task 10: Verify running Docker containers  
-    # - name: Verify running Docker containers
-    #   shell: docker ps
-    #   register: containers_status
-    #   changed_when: false
-    #   failed_when: containers_status.stdout_lines | length == 0
-
-    # - debug:
-    #     msg: "Current Docker containers:"
-    # - debug:
-    #     var: containers_status.stdout_lines
 
     
     # -----------------------------------------------------------------
