@@ -1,10 +1,10 @@
 /* UPDATE THESE VALUES TO MATCH YOUR SETUP */
 
-const PROCESSING_STATS_API_URL = "http://35.182.227.248:8100/stats"
+const PROCESSING_STATS_API_URL = "http://3.96.141.95:8100/stats"
 const ANALYZER_API_URL = {
-    stats: "http://35.182.227.248:8110/stats",
-    energy_consumption: "http://35.182.227.248:8090/events/energy-consumption",
-    solar_generation: "http://35.182.227.248:8090/events/solar-generation"
+    stats: "http://3.96.141.95:8110/stats",
+    energy_consumption: "http://3.96.141.95:8090/events/energy-consumption",
+    solar_generation: "http://3.96.141.95:8090/events/solar-generation"
 }
 
 // This function fetches and updates the general statistics

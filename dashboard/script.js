@@ -1,6 +1,6 @@
 const fetchStats = async () => {  
     try {  
-        const response = await fetch('http://35.182.227.248:8100/stats');  
+        const response = await fetch('http://3.96.141.95:8100/stats');  
         const data = await response.json();  
         document.getElementById('stats').innerText = JSON.stringify(data);  
 
