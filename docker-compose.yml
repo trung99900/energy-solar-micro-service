@@ -26,11 +26,11 @@ services:
     image: mysql
     restart: always  
     environment:  
-      MYSQL_RANDOM_ROOT_PASSWORD: 123456
-      MYSQL_USER: huutrung  
-      MYSQL_PASSWORD: 123456  
-      MYSQL_DATABASE: lab04_ConfigLogging  
-    ports:  
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_USER: huutrung
+      MYSQL_PASSWORD: 123456
+      MYSQL_DATABASE: lab04_ConfigLogging
+    ports:
       - '3306:3306'
     volumes:
       #Where my data will be persisted
