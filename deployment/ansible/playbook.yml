@@ -57,6 +57,7 @@
           - docker-ce
           - docker-ce-cli
           - containerd.io
+          - docker-compose-plugin
         state: latest
         update_cache: yes
 
@@ -136,7 +137,7 @@
 
     # Task 9: Start the microservices using Docker Compose  
     - name: Start microservices using Docker Compose
-      shell: docker-compose up -d
+      shell: docker compose up -d
       args:
         chdir: "/home/{{ ansible_user }}/energy-solar-micro-service"
 
