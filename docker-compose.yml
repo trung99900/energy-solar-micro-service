@@ -84,11 +84,11 @@ services:
       - ./logs:/logs
       - ./config/analyzer:/app/config
   
-  # dashboard:
-  #   build:
-  #     context: ./dashboard
-  #   ports:
-  #   - "8085:80" # Replace 8085 with any available port
+  dashboard:
+    build:
+      context: ./dashboard
+    ports:
+    - "8085:80"
 
 # Defines a named volume my-db
 volumes:

@@ -1,10 +1,10 @@
 /* UPDATE THESE VALUES TO MATCH YOUR SETUP */
 
-const PROCESSING_STATS_API_URL = "http://192.168.199.10:8123/processing.json"
+const PROCESSING_STATS_API_URL = "http://35.182.227.248:8100/data/processing.json"
 const ANALYZER_API_URL = {
-    stats: "http://192.168.199.10:8123/analyzer.json",
-    snow: "http://192.168.199.10:8123/event.json",
-    lift: "http://192.168.199.10:8123/event.json"
+    stats: "http://35.182.227.248:8110/analyzer.json",
+    energy_consumption: "http://storage:8090/events/energy-consumption",
+    solar_generation: "http://storage:8090/events/solar-generation"
 }
 
 // This function fetches and updates the general statistics
@@ -28,8 +28,8 @@ const getStats = () => {
     
     makeReq(PROCESSING_STATS_API_URL, (result) => updateCodeDiv(result, "processing-stats"))
     makeReq(ANALYZER_API_URL.stats, (result) => updateCodeDiv(result, "analyzer-stats"))
-    makeReq(ANALYZER_API_URL.snow, (result) => updateCodeDiv(result, "event-snow"))
-    makeReq(ANALYZER_API_URL.lift, (result) => updateCodeDiv(result, "event-lift"))
+    makeReq(ANALYZER_API_URL.energy_consumption, (result) => updateCodeDiv(result, "event-energy-consumption"))
+    makeReq(ANALYZER_API_URL.solar_generation, (result) => updateCodeDiv(result, "event-solar-generation"))
 }
 
 const updateErrorMessages = (message) => {
@@ -48,7 +48,7 @@ const updateErrorMessages = (message) => {
 
 const setup = () => {
     getStats()
-    setInterval(() => getStats(), 4000) // Update every 4 seconds
+    setInterval(() => getStats(), 3000) // Update every 4 seconds
 }
 
 document.addEventListener('DOMContentLoaded', setup)
