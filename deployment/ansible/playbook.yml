@@ -151,19 +151,7 @@
       args:
         chdir: "/home/{{ ansible_user }}/energy-solar-micro-service"
 
-    # - name: Start microservices using Docker Compose
-    #   community.docker.docker_compose:
-    #     project_src: "/home/{{ ansible_user }}/energy-solar-micro-service"
-    #     build: yes
-    #     state: present
-    #   register: output
-
-    # - name: Debug Docker Compose Output
-    #   debug:
-    #     var: output
-
-
-    
+       
     # -----------------------------------------------------------------
     # Clean Up Existing Docker Key Conflicts
     # SSH into an instance and clean up any previous conflicting Docker configurations.
