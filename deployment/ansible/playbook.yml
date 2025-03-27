@@ -17,7 +17,6 @@
           - curl
           - gnupg-agent
           - software-properties-common
-          - docker-compose
         state: present
         update_cache: yes
 
