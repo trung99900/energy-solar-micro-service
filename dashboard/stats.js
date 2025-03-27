@@ -1,10 +1,10 @@
 /* UPDATE THESE VALUES TO MATCH YOUR SETUP */
 
-const PROCESSING_STATS_API_URL = "http://35.182.150.145:8100/stats"
+const PROCESSING_STATS_API_URL = "http://15.223.69.212:8100/stats"
 const ANALYZER_API_URL = {
-    stats: "http://35.182.150.145:8110/stats",
-    energy_consumption: "http://35.182.150.145:8110/events/energy-consumption",
-    solar_generation: "http://35.182.150.145:8110/events/solar-generation"
+    stats: "http://15.223.69.212:8110/stats",
+    energy_consumption: "http://15.223.69.212:8110/events/energy-consumption",
+    solar_generation: "http://15.223.69.212:8110/events/solar-generation"
 }
 
 // This function fetches and updates the general statistics
