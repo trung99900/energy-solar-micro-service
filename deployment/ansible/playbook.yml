@@ -144,11 +144,22 @@
         mode: '0644'
 
     # Task 9: Start the microservices using Docker Compose  
+    # - name: Start microservices using Docker Compose
+    #   shell:
+    #     docker compose up -d --build
+    #   args:
+    #     chdir: "/home/{{ ansible_user }}/energy-solar-micro-service"
+
     - name: Start microservices using Docker Compose
-      shell:
-        docker compose up -d --build
-      args:
-        chdir: "/home/{{ ansible_user }}/energy-solar-micro-service"
+      community.docker.docker_compose:
+        project_src: "/home/{{ ansible_user }}/energy-solar-micro-service"
+        build: yes
+        state: present
+      register: output
+
+    - name: Debug Docker Compose Output
+      debug:
+        var: output
 
 
     
