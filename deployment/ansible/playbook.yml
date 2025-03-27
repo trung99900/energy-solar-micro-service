@@ -146,8 +146,7 @@
     # Task 9: Start the microservices using Docker Compose  
     - name: Start microservices using Docker Compose
       shell: |
-        docker compose build
-        docker compose up -d
+        docker compose up -d --build
       args:
         chdir: "/home/{{ ansible_user }}/energy-solar-micro-service"
 
