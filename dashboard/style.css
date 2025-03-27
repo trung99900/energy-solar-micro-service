@@ -33,7 +33,7 @@ code {
     padding: 1em;
 }
 
-#message {
+#messages {
     display: none;
     background-color: #ccc;
     border: 1px solid orange;

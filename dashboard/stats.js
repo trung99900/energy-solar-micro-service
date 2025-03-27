@@ -1,10 +1,10 @@
 /* UPDATE THESE VALUES TO MATCH YOUR SETUP */
 
-const PROCESSING_STATS_API_URL = "http://3.96.141.95:8100/stats"
+const PROCESSING_STATS_API_URL = "http://99.79.122.12:8100/stats"
 const ANALYZER_API_URL = {
-    stats: "http://3.96.141.95:8110/stats",
-    energy_consumption: "http://3.96.141.95:8090/events/energy-consumption",
-    solar_generation: "http://3.96.141.95:8090/events/solar-generation"
+    stats: "http://99.79.122.12:8110/stats",
+    energy_consumption: "http://99.79.122.12:8090/events/energy-consumption",
+    solar_generation: "http://99.79.122.12:8090/events/solar-generation"
 }
 
 // This function fetches and updates the general statistics
@@ -48,7 +48,7 @@ const updateErrorMessages = (message) => {
 
 const setup = () => {
     getStats()
-    setInterval(() => getStats(), 3000) // Update every 4 seconds
+    setInterval(() => getStats(), 3000) // Update every 3 seconds
 }
 
 document.addEventListener('DOMContentLoaded', setup)
