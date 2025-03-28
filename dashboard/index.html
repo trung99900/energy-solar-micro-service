@@ -7,41 +7,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="ACIT3855 statistics application" />
+    <title>ACIT3855 - Dashboard</title>
     <script src="./stats.js"></script>
-    <title>ACIT3855 - CHANGETHIS</title>
 </head>
 
 <body>
-    <main id="main">
+    <main>
+        <!-- Header Section -->
         <div id="header">
+            <img src="./solar-energy-logo.jpg" alt="ACIT3855 Logo" />
             <h1>Dashboard</h1>
+            <h5 id="last-updated">Last update: <span id="last-updated-value">N/A</span></h5>
         </div>
-        <h5 id="last-updated">Last update: <span id="last-updated-value">N/A</span></h5>
-        <div id="messages"></div>
+
+        <!-- Statistics Section -->
         <h2>Statistics</h2>
-        <div id="header">
-            <img src="./solar-energy-logo.jpg" alt="ACIT3855 Logo" style="height: 100px;" />
-            <h1>Dashboard</h1>
-        </div>
         <div id="statistics">
             <div id="processing">
+                <h3>Processing Stats</h3>
                 <code id="processing-stats">Placeholder value - processing stats should appear here</code>
             </div>
             <div id="analyzer">
+                <h3>Analyzer Stats</h3>
                 <code id="analyzer-stats">Placeholder value - analyzer stats should appear here</code>
             </div>
         </div>
-        <h2>Analyzer events</h2>
-        <div id="analyzer events">
+
+        <!-- Analyzer Events Section -->
+        <h2>Analyzer Events</h2>
+        <div id="analyzer-events">
             <div>
-                <h3>Energy consumpstion event</h3>
-                <code id="event-energy-consumption">Placeholder value - energy consumption should appear here
-                </code>
+                <h3>Energy Consumption Event</h3>
+                <code id="event-energy-consumption">Placeholder value - energy consumption events will appear here</code>
             </div>
             <div>
-                <h3>Solar generation</h3>
-                <code id="event-solar-generation">Placeholder value - solar generation should appear here
-                </code>
+                <h3>Solar Generation</h3>
+                <code id="event-solar-generation">Placeholder value - solar generation events will appear here</code>
             </div>
         </div>
     </main>
