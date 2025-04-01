@@ -1,10 +1,10 @@
 /* UPDATE THESE VALUES TO MATCH YOUR SETUP */
 
-const PROCESSING_STATS_API_URL = "http://99.79.60.105:8100/stats"
+const PROCESSING_STATS_API_URL = "http://3.99.189.212:8100/stats"
 const ANALYZER_API_URL = {
-    stats: "http://99.79.60.105:8110/stats",
-    energy_consumption: "http://99.79.60.105:8110/events/energy-consumption",
-    solar_generation: "http://99.79.60.105:8110/events/solar-generation"
+    stats: "http://3.99.189.212:8110/stats",
+    energy_consumption: "http://3.99.189.212:8110/events/energy-consumption",
+    solar_generation: "http://3.99.189.212:8110/events/solar-generation"
 }
 
 // Function to generate a random integer for the index parameter  
