@@ -9,10 +9,10 @@ info:
 paths:  
   /stats:  
     get:
+      operationId: app.get_stats
       responses:  
         '200':
-          description: Successfully retrieved statistics
-          operationId: app.get_stats 
+          description: Successfully retrieved statistics          
           content:  
             application/json:
               schema:  
