@@ -42,7 +42,8 @@ services:
       context: ./receiver
       dockerfile: dockerfile
     ports:
-      - "8080:8080"
+      # - "8080:8080"
+      - 8080
     depends_on:
       - "kafka"
     volumes:
