@@ -9,18 +9,37 @@ info:
 paths:  
   /stats:  
     get:  
-      summary: Get statistics  
-      description: Retrieve processed statistics for energy consumption and solar generation.  
-      operationId: app.get_stats  
-      responses:  
-        '200':  
-          description: Successfully retrieved statistics  
-          content:  
-            application/json:  
-              schema:
-                type: object
-                items: 
-                  $ref: '#/components/schemas/ReadingStats'  
+    responses:  
+      '200':  
+        description: Successfully retrieved statistics  
+        content:  
+          application/json:  
+            schema:  
+              type: object  
+              required:  
+                - num_energy_events  
+                - max_energy_consumed  
+                - num_solar_events  
+                - max_power_generated  
+                - last_updated  
+              properties:  
+                num_energy_events:  
+                  type: integer  
+                  example: 5  
+                max_energy_consumed:  
+                  type: number  
+                  example: 1000  
+                num_solar_events:  
+                  type: integer  
+                  example: 3  
+                max_power_generated:  
+                  type: number  
+                  example: 500  
+                last_updated:  
+                  type: string  
+                  format: date-time  
+                  example: '2021-03-01T12:00:00Z'
+                  
         '400':  
           description: Invalid request
           content:  
@@ -31,31 +50,4 @@ paths:
                   message:  
                     type: string  
                   code:  
-                    type: integer  
-components:  
-  schemas:  
-    ReadingStats:
-      required:  
-        - num_energy_events  
-        - max_energy_consumed  
-        - num_solar_events  
-        - max_power_generated  
-        - last_updated  
-      type: object  
-      properties:  
-        num_energy_events:  
-          type: integer
-          example: 5  
-        max_energy_consumed:  
-          type: number
-          example: 1000  
-        num_solar_events:  
-          type: integer
-          example: 3  
-        max_power_generated:  
-          type: number
-          example: 500  
-        last_updated:  
-          type: string  
-          format: date-time
-          example: 2021-03-01T12:00:00Z
+                    type: integer
