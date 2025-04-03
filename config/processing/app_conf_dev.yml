@@ -9,7 +9,9 @@ scheduler:
 eventstores:
   energy_consumption:
     # url: http://localhost:8090/events/energy-consumption 
-    url: http://storage:8090/events/energy-consumption
+    # url: http://storage:8090/events/energy-consumption
+    url: http://storage:8090/storage/events/energy-consumption
   solar_generation:  
     # url: http://localhost:8090/events/solar-generation
-    url: http://storage:8090/events/solar-generation
+    # url: http://storage:8090/events/solar-generation
+    url: http://storage:8090/storage/events/solar-generation
