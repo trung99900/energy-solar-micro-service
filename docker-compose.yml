@@ -138,12 +138,11 @@ services:
       - storage
     volumes:
       - ./logs:/logs
-      # - ./config/consistency_check:/app/config
       - ./config/consistency_check:/app/config
       - ./data/consistency_check:/app/data
     environment:  
-      - LOG_CONFIG=/config/log_conf_dev.yml
-      - APP_CONFIG=/config/app_conf_dev.yml
+      - LOG_CONFIG=app/config/log_conf_dev.yml
+      - APP_CONFIG=app/config/app_conf_dev.yml
     networks:
       - app_network
 
