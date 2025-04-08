@@ -3,6 +3,8 @@ services:
     image: wurstmeister/zookeeper
     volumes: 
       - zookeeper:/opt/zookeeper-3.4.13/data
+    networks:
+      - app_network
   kafka:
     image: wurstmeister/kafka
     command: [start-kafka.sh]
