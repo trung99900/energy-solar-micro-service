@@ -70,7 +70,7 @@ def process_messages():
         # Commit the new message as being read  
         consumer.commit_offsets()
 
-def get_Energy_consumption_event(start_timestamp, end_timestamp):  
+def get_energy_consumption_event(start_timestamp, end_timestamp):  
     """ Get solar generation events filtered by timestamps """  
     try:  
         # start = datetime.datetime.fromisoformat(start_timestamp)  
