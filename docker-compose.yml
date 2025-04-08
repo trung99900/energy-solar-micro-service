@@ -139,8 +139,8 @@ services:
     volumes:
       - ./logs:/logs
       # - ./config/consistency_check:/app/config
-      - ./config:/consistency_check:/app/config
-      - ./data:/consistency_check:/app/data
+      - ./config/consistency_check:/app/config
+      - ./data/consistency_check:/app/data
     environment:  
       - LOG_CONFIG=/config/log_conf_dev.yml
       - APP_CONFIG=/config/app_conf_dev.yml
