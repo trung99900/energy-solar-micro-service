@@ -115,6 +115,7 @@
         - storage.log
         - analyzer.log
         - processing.log
+        - consistency.log
 
     - name: Create processing folder if not exists
       file:

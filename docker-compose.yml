@@ -127,7 +127,6 @@ services:
       - app_network
   
   consistency_check:
-    image: consistency_check:latest
     build:
       context: ./consistency_check
       dockerfile: dockerfile
@@ -138,13 +137,13 @@ services:
       - analyzer
       - storage
     volumes:
-      - ./logs:/app/logs
+      - ./logs:/logs
       # - ./config/consistency_check:/app/config
-      - ./config/consistency_check:/app/config:ro
-      - ./data/consistency_check:/app/data
+      - ./config:/consistency_check:/app/config
+      - ./data:/consistency_check:/app/data
     environment:  
-      - LOG_CONFIG=/config/log_conf.yml
-      - APP_CONFIG=/config/app_conf.yml
+      - LOG_CONFIG=/config/log_conf_dev.yml
+      - APP_CONFIG=/config/app_conf_dev.yml
     networks:
       - app_network
 
