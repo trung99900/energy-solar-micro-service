@@ -22,6 +22,8 @@ services:
       - ./data/kafka:/kafka/logs
     depends_on:
       - "zookeeper"
+    networks:
+      - app_network
   db:  
     image: mysql
     restart: always  
@@ -36,6 +38,8 @@ services:
       #Where my data will be persisted
       - my-db:/var/lib/mysql
       - ./data/database:/docker-entrypoint-initdb.d
+    networks:
+      - app_network
     
   receiver:
     build:
@@ -49,6 +53,8 @@ services:
     volumes:
       - ./logs:/logs
       - ./config/receiver:/app/config
+    networks:
+      - app_network
   storage:
     build:
       context: ./storage
@@ -61,6 +67,8 @@ services:
     volumes:
       - ./logs:/logs
       - ./config/storage:/app/config
+    networks:
+      - app_network
   processing:
     build:
       context: processing
@@ -75,6 +83,8 @@ services:
       - ./logs:/logs
       - ./config/processing:/app/config
       - ./data/processing:/app/data
+    networks:
+      - app_network
   analyzer:
     build:
       context: ./analyzer
@@ -88,6 +98,8 @@ services:
     volumes:
       - ./logs:/logs
       - ./config/analyzer:/app/config
+    networks:
+      - app_network
   
   dashboard:
     build:
@@ -95,6 +107,8 @@ services:
     # ports:
     # - "80:80"
     restart: always
+    networks:
+      - app_network
   
   nginx:
     image: nginx
@@ -109,6 +123,8 @@ services:
       - analyzer
       - processing
       - storage
+    networks:
+      - app_network
   
   consistency_check:
     image: consistency_check:latest
@@ -136,3 +152,7 @@ services:
 volumes:
   my-db:
   zookeeper:
+
+networks:
+  app_network:
+    driver: bridge
