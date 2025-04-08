@@ -9,7 +9,7 @@ paths:
   /events/energy-consumption:
     get:
       summary: Retrieve an energy consumption event by index
-      operationId: app.getEnergyConsumptionEvent
+      operationId: app.get_energy_consumption_event
       description: Returns the energy consumption event located at the specified index in the Kafka queue.
       parameters:
         - name: index
@@ -50,7 +50,7 @@ paths:
         - Solar Generation Events
       summary: Retrieve a solar generation event by index
       description: Returns the solar generation event located at the specified index in the Kafka queue.
-      operationId: app.getSolarGenerationEvent
+      operationId: app.get_solar_generation_event
       parameters:
         - name: index
           in: query
@@ -71,7 +71,7 @@ paths:
   /stats:
     get:
       summary: Retrieve event statistics
-      operationId: app.getEventStats
+      operationId: app.get_event_stats
       description: Gets the stats of the history events
       responses:
         '200':
@@ -80,6 +80,64 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EventStats'
+
+  /events/energy-consumption/ids:
+    get:
+      summary: Retrieve event IDs and trace IDs for energy consumption events
+      description: |
+        Returns all event IDs and trace IDs from the `energy-consumption` Kafka topic.
+      operationId: app.get_energy_consumption_ids
+      responses:
+        '200':
+          description: Successfully retrieved energy consumption event IDs and trace IDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    event_id:
+                      type: string
+                      description: The unique ID for the event.
+                      example: "123e4567-e89b-12d3-a456-426614174000"
+                    trace_id:
+                      type: string
+                      description: The unique trace ID for the event.
+                      example: "trace-id-1"
+        '400':
+          description: Invalid request
+        '500':
+          description: Internal server error
+  /events/solar-generation/ids:
+    get:
+      summary: Retrieve event IDs and trace IDs for solar generation events
+      description: |
+        Returns all event IDs and trace IDs from the `solar-generation` Kafka topic.
+      operationId: app.get_solar_generation_ids
+      responses:
+        '200':
+          description: Successfully retrieved solar generation event IDs and trace IDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    event_id:
+                      type: string
+                      description: The unique ID for the event.
+                      example: "123e4567-e89b-12d3-a456-426614174001"
+                    trace_id:
+                      type: string
+                      description: The unique trace ID for the event.
+                      example: "trace-id-2"
+        '400':
+          description: Invalid request
+        '500':
+          description: Internal server error
+                
 components:
   schemas:
     EnergyConsumptionEvent:

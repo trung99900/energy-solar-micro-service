@@ -1,0 +1,8 @@
+processing:  
+  url: "http://processing:8100"
+analyzer:
+  url: "http://analyzer:8110"
+storage:
+  url: "http://storage:8090"
+datastore:
+  filename: "data/results.json"

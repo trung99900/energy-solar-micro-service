@@ -1,17 +1,16 @@
-import connexion, yaml, logging, logging.config, json, httpx, uuid
+import connexion, yaml, logging, logging.config, json
 from connexion import NoContent
 
 from base import Base
 from energy_consumption import EnergyConsumption
 from solar_generation import SolarGeneration
-from flask import Flask, request, jsonify
+from flask import jsonify
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
 
-import datetime
 from threading import Thread
 from dateutil import parser
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, select, func
 from sqlalchemy.orm import sessionmaker
 
 # Load the configuration from app_conf.yml  
@@ -64,64 +63,14 @@ def process_messages():
 
         # Process based on the event type  
         if msg["type"] == "energy-consumption":  
-            receiveEnergyConsumptionEvent(payload)
+            receive_energy_consumption_event(payload)
         elif msg["type"] == "solar-generation":
-            receiveSolarGenerationEvent(payload) 
+            receive_solar_generation_event(payload) 
 
         # Commit the new message as being read  
         consumer.commit_offsets()
-   
-# with open('log_conf.yml', 'r') as f:  
-#     log_config = yaml.safe_load(f.read())  
-# logging.config.dictConfig(log_config)  
-# logger = logging.getLogger('basicLogger')
 
-# def make_session():  
-#     return sessionmaker(bind=engine)()
-
-# def receiveEnergyConsumptionEvent(body):
-#     """ Receives an energy consumption reading """
-    
-#     session = DBSession()
-#     logger.info(f"Response for event energy_consumption (id: {body['trace_id']}) has status 201")
-#     ec = EnergyConsumption(body["device_id"], 
-#                            body["timestamp"], 
-#                            body["energy_consumed"], 
-#                            body["voltage"],
-#                            body["trace_id"])
-    
-#     logger.info(f"Energy consumption event (id: {body['trace_id']}) received")
-#     logger.debug(f"Stored event Energy consumption_report with a trace id of {body['trace_id']}")
-
-#     session.add(ec)
-#     session.commit()
-    
-#     session.close()
-
-#     return NoContent, 201
-    
-# def receiveSolarGenerationEvent(body):
-#     """ Receives a solar generation reading """
-    
-#     session = DBSession()
-#     logger.info(f"Response for event solar_generation (id: {body['trace_id']}) has status 201")
-
-#     sg = SolarGeneration(body["device_id"], 
-#                          body["timestamp"], 
-#                          body["power_generated"], 
-#                          body["temperature"],
-#                          body["trace_id"])
-    
-#     logger.info(f"Solar generation event (id: {body['trace_id']}) received")
-#     logger.debug(f"Stored Solar generation_report with a trace id of {body['trace_id']}")
-
-#     session.add(sg)
-#     session.commit()
-#     session.close()
-
-#     return NoContent, 201
-
-def getEnergyConsumptionEvent(start_timestamp, end_timestamp):  
+def get_Energy_consumption_event(start_timestamp, end_timestamp):  
     """ Get solar generation events filtered by timestamps """  
     try:  
         # start = datetime.datetime.fromisoformat(start_timestamp)  
@@ -151,7 +100,7 @@ def getEnergyConsumptionEvent(start_timestamp, end_timestamp):
     finally:  
         session.close()    
 
-def getSolarGenerationEvent(start_timestamp, end_timestamp):  
+def get_solar_generation_event(start_timestamp, end_timestamp):  
     """ Get solar generation events filtered by timestamps """  
     try:  
         # Parse timestamps to datetime objects  
@@ -182,7 +131,7 @@ def getSolarGenerationEvent(start_timestamp, end_timestamp):
     finally:  
         session.close()
 
-def receiveEnergyConsumptionEvent(event):  
+def receive_energy_consumption_event(event):  
     """Store an energy consumption event into the database."""  
     logger.debug(f"finally")
     session = DBSession()  
@@ -203,7 +152,7 @@ def receiveEnergyConsumptionEvent(event):
     finally:  
         session.close()  
 
-def receiveSolarGenerationEvent(event):  
+def receive_solar_generation_event(event):  
     logger.info(event)
     """Store a solar generation event into the database."""  
     session = DBSession()  
@@ -229,6 +178,56 @@ def setup_kafka_thread():
     t = Thread(target=process_messages)
     t.setDaemon(True)
     t.start()
+
+def get_event_counts():
+    """
+    Retrieve the count of events in the database for each type.
+    This is referenced in the OpenAPI as operationId: app.get_event_counts.
+    """
+    session = DBSession()
+    try:
+        # Query counts for each event type
+        num_energy_consumption = session.query(func.count(EnergyConsumption.id)).scalar()
+        num_solar_generation = session.query(func.count(SolarGeneration.id)).scalar()
+
+        # Return the counts as JSON
+        response = {
+            "num_energy_consumption": num_energy_consumption,
+            "num_solar_generation": num_solar_generation
+        }
+
+        logger.info(f"Event counts retrieved: {response}")
+        return jsonify(response), 200
+    except Exception as e:
+        logger.error(f"Error retrieving event counts: {e}")
+        return {"error": "Internal server error"}, 500
+    finally:
+        session.close()
+
+def get_event_ids(event_type):
+    """
+    Retrieve the event and trace IDs for a specific event type.
+    This is referenced in the OpenAPI as operationId: app.get_event_ids.
+    """
+    session = DBSession()
+    try:
+        if event_type == "energy-consumption":
+            query = session.query(EnergyConsumption.id, EnergyConsumption.trace_id).all()
+        elif event_type == "solar-generation":
+            query = session.query(SolarGeneration.id, SolarGeneration.trace_id).all()
+        else:
+            return {"error": "Invalid event type"}, 400
+
+        # Convert results to list of dictionaries
+        results = [{"event_id": row[0], "trace_id": row[1]} for row in query]
+
+        logger.info(f"{len(results)} {event_type} events retrieved")
+        return jsonify(results), 200
+    except Exception as e:
+        logger.error(f"Error retrieving IDs for {event_type}: {e}")
+        return {"error": "Internal server error"}, 500
+    finally:
+        session.close() 
 
 # Create the Connexion app  
 app = connexion.FlaskApp(__name__, specification_dir='')  

@@ -109,6 +109,28 @@ services:
       - analyzer
       - processing
       - storage
+  
+  consistency_check:
+    image: consistency_check:latest
+    build:
+      context: ./consistency_check
+      dockerfile: dockerfile
+    ports:
+      - "8120:8120"
+    depends_on:
+      - processing
+      - analyzer
+      - storage
+    volumes:
+      - ./logs:/app/logs
+      # - ./config/consistency_check:/app/config
+      - ./config/consistency_check:/app/config:ro
+      - ./data/consistency_check:/app/data
+    environment:  
+      - LOG_CONFIG=/config/log_conf.yml
+      - APP_CONFIG=/config/app_conf.yml
+    networks:
+      - app_network
 
 # Defines a named volume my-db
 volumes:
