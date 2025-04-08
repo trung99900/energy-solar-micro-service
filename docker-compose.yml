@@ -140,6 +140,7 @@ services:
       - ./logs:/logs
       - ./config/consistency_check:/app/config
       - ./data/consistency_check:/app/data
+      - ./consistency_check/consistency_check.yml:/app/consistency_check.yml
     environment:  
       - LOG_CONFIG=app/config/log_conf_dev.yml
       - APP_CONFIG=app/config/app_conf_dev.yml
