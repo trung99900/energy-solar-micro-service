@@ -116,7 +116,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  message::
+                  message:
                     type: string
         
 components:
