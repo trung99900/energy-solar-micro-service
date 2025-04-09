@@ -9,19 +9,19 @@ info:
 paths:  
   /events/energy-consumption:  
     post:  
-      summary: Receive energy consumption event  
+      summary: Receive energy consumption event
       description: Endpoint to receive energy consumption readings from devices or applications.  
-      operationId: app.receiveEnergyConsumptionEvent  
+      operationId: app.receive_energy_consumption_event
       requestBody:  
-        description: Energy consumption event data  
+        description: Energy consumption event data
         required: true  
         content:  
           application/json:  
             schema:  
-              $ref: '#/components/schemas/EnergyConsumptionEvent'  
+              $ref: '#/components/schemas/EnergyConsumptionEvent'
       responses:  
         '201':  
-          description: Item created  
+          description: Item created
         '400':  
           description: "Invalid input, object invalid"
 
@@ -29,7 +29,7 @@ paths:
     post:  
       summary: Receive solar generation event  
       description: Endpoint to receive solar power generation readings from devices or applications.  
-      operationId: app.receiveSolarGenerationEvent    
+      operationId: app.receive_solar_generation_event    
       requestBody:  
         description: Solar generation event data  
         required: true  
