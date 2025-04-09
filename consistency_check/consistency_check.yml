@@ -10,7 +10,7 @@ paths:
   /update:
     post:
       summary: Perform a consistency check and update the results.
-      operationId: app.update_consistency_checks
+      operationId: app.update_consistency_check
       description: |
         This endpoint triggers a consistency check by:
         - Fetching event counts and IDs from the processing, analyzer, and storage services.

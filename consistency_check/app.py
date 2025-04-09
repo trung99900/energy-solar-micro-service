@@ -191,11 +191,6 @@ if "CORS_ALLOW_ALL" in os.environ and os.environ["CORS_ALLOW_ALL"] == "yes":
         allow_headers=["*"],
     )
 
-# Add routes to the Flask application
-# app.add_url_rule('/update', 'update_consistency_check', update_consistency_check, methods=['POST'])
-# app.add_url_rule('/results', 'get_results', get_results, methods=['GET'])
-# app.add_url_rule('/checks', 'get_checks', get_checks, methods=['GET'])
-
 if __name__ == '__main__':
     app.run(port=8120, host='0.0.0.0')
     
