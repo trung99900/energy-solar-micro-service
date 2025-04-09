@@ -3,8 +3,8 @@ services:
     image: wurstmeister/zookeeper
     volumes: 
       - zookeeper:/opt/zookeeper-3.4.13/data
-    networks:
-      - app_network
+    # networks:
+      # - app_network
   kafka:
     image: wurstmeister/kafka
     command: [start-kafka.sh]
@@ -24,8 +24,8 @@ services:
       - ./data/kafka:/kafka/logs
     depends_on:
       - "zookeeper"
-    networks:
-      - app_network
+    # networks:
+      # - app_network
   db:  
     image: mysql
     restart: always  
@@ -40,8 +40,8 @@ services:
       #Where my data will be persisted
       - my-db:/var/lib/mysql
       - ./data/database:/docker-entrypoint-initdb.d
-    networks:
-      - app_network
+    # networks:
+      # - app_network
     
   receiver:
     build:
@@ -55,8 +55,8 @@ services:
     volumes:
       - ./logs:/logs
       - ./config/receiver:/app/config
-    networks:
-      - app_network
+    # networks:
+      # - app_network
   storage:
     build:
       context: ./storage
@@ -69,8 +69,8 @@ services:
     volumes:
       - ./logs:/logs
       - ./config/storage:/app/config
-    networks:
-      - app_network
+    # networks:
+      # - app_network
   processing:
     build:
       context: processing
@@ -85,8 +85,8 @@ services:
       - ./logs:/logs
       - ./config/processing:/app/config
       - ./data/processing:/app/data
-    networks:
-      - app_network
+    # networks:
+      # - app_network
   analyzer:
     build:
       context: ./analyzer
@@ -100,8 +100,8 @@ services:
     volumes:
       - ./logs:/logs
       - ./config/analyzer:/app/config
-    networks:
-      - app_network
+    # networks:
+      # - app_network
   
   dashboard:
     build:
@@ -125,8 +125,8 @@ services:
       - analyzer
       - processing
       - storage
-    networks:
-      - app_network
+    # networks:
+      # - app_network
   
   consistency_check:
     build:
@@ -146,14 +146,14 @@ services:
     environment:  
       - LOG_CONFIG=app/config/log_conf_dev.yml
       - APP_CONFIG=app/config/app_conf_dev.yml
-    networks:
-      - app_network
+    # networks:
+      # - app_network
 
 # Defines a named volume my-db
 volumes:
   my-db:
   zookeeper:
 
-networks:
-  app_network:
-    driver: bridge
+# networks:
+#   app_network:
+#     driver: bridge
