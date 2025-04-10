@@ -17,7 +17,7 @@ with open('config/log_conf_dev.yml', 'r') as f:
 
 logger = logging.getLogger('basicLogger')
 
-def run_consistency_check():
+def update_consistency_check():
     start_time = time.time()
     logger.info("Starting consistency check...")
 
@@ -58,7 +58,7 @@ def run_consistency_check():
 
     return {"processing_time_ms": processing_time}, 200
 
-def get_consistency_results():
+def get_checks():
     try:
         with open(app_config['datastore']['filename'], 'r') as f:
             results = json.load(f)
