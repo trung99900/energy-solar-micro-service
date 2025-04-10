@@ -5,4 +5,4 @@ analyzer:
 storage:
   url: "http://storage:8090"
 datastore:
-  filename: "data/results.json"
+  filename: "app/data/consistency_check.json"
