@@ -40,75 +40,14 @@ paths:
         If no consistency checks have been run yet, it returns a 404 error.
       responses:
         '200':
-          description: Latest consistency check results retrieved successfully.
+          description: Successfully ran the checks
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Checks'
                 type: object
                 properties:
-                  last_updated:
-                    type: string
-                    format: date-time
-                    description: The timestamp of the last consistency check.
-                    example: "2025-03-15T14:30:00Z"
-                  counts:
-                    type: object
-                    properties:
-                      db:
-                        type: object
-                        description: Event counts from the database.
-                        example:
-                          event1: 10
-                          event2: 5
-                      queue:
-                        type: object
-                        description: Event counts from the queue.
-                        example:
-                          event1: 7
-                          event2: 3
-                      processing:
-                        type: object
-                        description: Event counts from the processing service.
-                        example:
-                          event1: 2
-                          event2: 8
-                  missing_in_db:
-                    type: array
-                    description: Events present in the queue but missing from the database.
-                    items:
-                      type: object
-                      properties:
-                        event_id:
-                          type: integer
-                          description: The unique event ID.
-                          example: 12345
-                        trace_id:
-                          type: string
-                          description: The unique trace ID associated with the event.
-                          example: "550e8400-e29b-41d4-a716-446655440000"
-                        type:
-                          type: string
-                          description: The type of event.
-                          example: "snow"
-                  missing_in_queue:
-                    type: array
-                    description: Events present in the database but missing from the queue.
-                    items:
-                      type: object
-                      properties:
-                        event_id:
-                          type: integer
-                          description: The unique event ID.
-                          example: 67890
-                        trace_id:
-                          type: string
-                          description: The unique trace ID associated with the event.
-                          example: "8f14e45f-e26c-48d3-a716-5579bbd4ed2a"
-                        type:
-                          type: string
-                          description: The type of event.
-                          example: "lift"
+                  processing_time_ms:
+                    type: integer
         '404':
           description: No consistency checks have been run yet.
           content:
