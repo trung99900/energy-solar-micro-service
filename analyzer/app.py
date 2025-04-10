@@ -101,9 +101,9 @@ def get_event_ids(event_type):
 
         # Select appropriate Kafka topic
         if event_type == "energy-consumption":
-            topic = client.topics[app_config['events']['energy_consumption_topic'].encode()]
+            topic = client.topics[app_config['events']['topic'].encode()]
         elif event_type == "solar-generation":
-            topic = client.topics[app_config['events']['solar_generation_topic'].encode()]
+            topic = client.topics[app_config['events']['topic'].encode()]
         else:
             logger.error("Invalid event type provided")
             return {"message": "Invalid event type provided."}, 400
