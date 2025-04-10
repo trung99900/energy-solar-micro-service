@@ -11,8 +11,8 @@ const ANALYZER_API_URL = {
     solar_generation: "/analyzer/events/solar-generation"
 }
 
-const CONSISTENCY_CHECKS_API_URL = "consistency_check/checks";
-const CONSISTENCY_UPDATE_API_URL = "consistency_check/update";
+const CONSISTENCY_CHECKS_API_URL = "/consistency_check/checks";
+const CONSISTENCY_UPDATE_API_URL = "/consistency_check/update";
 
 // Function to generate a random integer for the index parameter  
 const generateRandomIndex = (min = 1, max = 100) => Math.floor(Math.random() * (max - min + 1)) + min;
