@@ -24,7 +24,7 @@ def get_energy_consumption_event(index):
     """  
     return get_event("energy-consumption", index)  
 
-def get_solar_generation_event(index):  
+def get_solar_generation_event(index):
     """  
     Endpoint to retrieve an event of type 'SolarGeneration'.  
     """  

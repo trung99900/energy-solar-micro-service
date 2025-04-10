@@ -7,7 +7,7 @@ info:
     email: student@bcit.ca
 
 paths:
-  /consistency_check/update:
+  /update:
     post:
       summary: Perform a consistency check and update the results.
       operationId: app.update_consistency_check
@@ -31,7 +31,7 @@ paths:
                   processing_time_ms:
                     type: integer                    
         
-  /consistency_check/checks:
+  /checks:
     get:
       summary: Displays the results of the checks
       operationId: app.get_checks
