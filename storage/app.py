@@ -209,17 +209,15 @@ def get_event_ids(event_type):
     session = DBSession()
     try:
         if event_type == "energy-consumption":
-            query = session.query(EnergyConsumption.id, EnergyConsumption.trace_id).all()
+            events = session.query(EnergyConsumption.id, EnergyConsumption.trace_id).all()
         elif event_type == "solar-generation":
-            query = session.query(SolarGeneration.id, SolarGeneration.trace_id).all()
+            events = session.query(SolarGeneration.id, SolarGeneration.trace_id).all()
         else:
-            logger.error(f"Invalid event type: {event_type}")
             return {"error": "Invalid event type"}, 400
 
-        results = [{"event_id": eid, "trace_id": trace_id} for eid, trace_id in query]
-
-        logger.info(f"Retrieved {len(results)} events for type: {event_type}")
-        return jsonify(results), 200
+        event_ids = [{"event_id": event[0], "trace_id": event[1]} for event in events]
+        logger.info(f"Event IDs retrieved successfully for {event_type}: {len(event_ids)} events")
+        return jsonify(event_ids), 200
     except Exception as e:
         logger.error(f"Error retrieving event IDs for {event_type}: {e}")
         return {"error": "Internal server error"}, 500

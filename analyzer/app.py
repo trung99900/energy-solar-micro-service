@@ -103,36 +103,21 @@ def get_event_ids(event_type):
         topic = client.topics[app_config['events']['topic'].encode()]
         consumer = topic.get_simple_consumer(reset_offset_on_start=True, consumer_timeout_ms=1000)
 
-        energy_events = []
-        solar_events = []
+        event_ids = []
 
         for msg in consumer:
             if msg is None:
                 break
+            message = json.loads(msg.value.decode("utf-8"))
+            if message["type"] == event_type:
+                event_ids.append({"event_id": message["id"], "trace_id": message["trace_id"]})
 
-            message = msg.value.decode('utf-8')
-            if message["type"] == "energy-consumption":
-                energy_events.append({
-                    "event_id": message["payload"]["event_id"],
-                    "trace_id": message["payload"]["trace_id"]
-                })
-            elif message["type"] == "solar-generation":
-                solar_events.append({
-                    "event_id": message["payload"]["event_id"],
-                    "trace_id": message["payload"]["trace_id"]
-                })
-
-        response = {
-            "energy_consumption": energy_events,
-            "solar_generation": solar_events
-        }
-
-        logger.info(f"Event IDs retrieved successfully: {response}")
-        return jsonify(response), 200
+        logger.info(f"Event IDs retrieved successfully for {event_type}: {len(event_ids)} events")
+        return jsonify(event_ids), 200
 
     except Exception as e:
-        logger.error(f"Error retrieving event IDs: {e}")
-        return {"message": "Internal server error"}, 500
+        logger.error(f"Error retrieving event IDs for {event_type}: {e}")
+        return {"error": "Internal server error"}, 500
 
 def get_event_counts():
     """
