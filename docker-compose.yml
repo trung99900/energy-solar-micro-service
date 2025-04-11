@@ -106,11 +106,7 @@ services:
   dashboard:
     build:
       context: ./dashboard
-    # ports:
-    # - "80:80"
     restart: always
-    # networks:
-    #   - app_network
   
   nginx:
     image: nginx
@@ -125,8 +121,6 @@ services:
       - analyzer
       - processing
       - storage
-    # networks:
-      # - app_network
   
   consistency_check:
     build:
@@ -146,14 +140,8 @@ services:
     environment:  
       - LOG_CONFIG=app/config/log_conf_dev.yml
       - APP_CONFIG=app/config/app_conf_dev.yml
-    # networks:
-      # - app_network
 
 # Defines a named volume my-db
 volumes:
   my-db:
   zookeeper:
-
-# networks:
-#   app_network:
-#     driver: bridge
