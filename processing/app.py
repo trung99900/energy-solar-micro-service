@@ -128,7 +128,35 @@ def get_stats():
 def init_scheduler():  
     sched = BackgroundScheduler(daemon=True)  
     sched.add_job(populate_stats, 'interval', seconds=app_config['scheduler']['interval'])  
-    sched.start()  
+    sched.start()
+
+def get_event_counts():
+    """
+    Retrieve the count of all event types from the JSON datastore.
+    """
+    logger.info("Fetching event counts from datastore")
+    stats = load_stats()
+    if not stats:
+        logger.error("No statistics available")
+        return jsonify({"error": "No statistics available"}), 404
+
+    response = {
+        "energy_consumption": stats["num_energy_events"],
+        "solar_generation": stats["num_solar_events"]
+    }
+
+    logger.info(f"Event counts retrieved successfully: {response}")
+    return jsonify(response), 200
+
+
+def get_event_ids():
+    """
+    Retrieve a list of event IDs and trace IDs from the JSON datastore.
+    """
+    logger.info("Fetching event IDs from datastore")
+    # This is a placeholder implementation. If event IDs and trace IDs are not stored in the JSON file,
+    # you need to modify the `populate_stats` function to include them.
+    return jsonify({"message": "Not implemented"}), 501
 
 # Create the Connexion app  
 app = connexion.FlaskApp(__name__, specification_dir='')  

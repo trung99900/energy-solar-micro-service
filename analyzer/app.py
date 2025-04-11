@@ -99,33 +99,68 @@ def get_event_ids(event_type):
     """
     logger.info(f"Fetching event IDs and trace IDs for {event_type}")
     try:
-        client = KafkaClient(hosts=f"{app_config['events']['hostname']}")
-
+        client = KafkaClient(hosts=f"{app_config['events']['hostname']}:{app_config['events']['port']}")
         topic = client.topics[app_config['events']['topic'].encode()]
         consumer = topic.get_simple_consumer(reset_offset_on_start=True, consumer_timeout_ms=1000)
 
-        events = []
+        energy_events = []
+        solar_events = []
+
         for msg in consumer:
             if msg is None:
                 break
 
             message = msg.value.decode('utf-8')
-            data = json.loads(message)
-
-            # Include only events matching the given type
-            if data["type"] == event_type:
-                events.append({
-                    "event_id": data["payload"]["event_id"],
-                    "trace_id": data["payload"]["trace_id"]
+            if message["type"] == "energy-consumption":
+                energy_events.append({
+                    "event_id": message["payload"]["event_id"],
+                    "trace_id": message["payload"]["trace_id"]
+                })
+            elif message["type"] == "solar-generation":
+                solar_events.append({
+                    "event_id": message["payload"]["event_id"],
+                    "trace_id": message["payload"]["trace_id"]
                 })
 
-        logger.info(f"Retrieved {len(events)} events for {event_type}")
-        return jsonify(events), 200
+        response = {
+            "energy_consumption": energy_events,
+            "solar_generation": solar_events
+        }
+
+        logger.info(f"Event IDs retrieved successfully: {response}")
+        return jsonify(response), 200
 
     except Exception as e:
         logger.error(f"Error retrieving event IDs: {e}")
         return {"message": "Internal server error"}, 500
 
+def get_event_counts():
+    """
+    Retrieve the count of all event types in the Kafka queue.
+    """
+    logger.info("Retrieving event counts from Kafka")
+    try:
+        client = KafkaClient(hosts=f"{app_config['events']['hostname']}:{app_config['events']['port']}")
+        topic = client.topics[app_config["events"]["topic"].encode()]
+        consumer = topic.get_simple_consumer(reset_offset_on_start=True, consumer_timeout_ms=1000)
+
+        counts = {"energy_consumption": 0, "solar_generation": 0}
+
+        for msg in consumer:
+            if msg is None:
+                break
+
+            message = json.loads(msg.value.decode("utf-8"))
+            if message["type"] == "energy-consumption":
+                counts["energy_consumption"] += 1
+            elif message["type"] == "solar-generation":
+                counts["solar_generation"] += 1
+
+        logger.info(f"Event counts retrieved successfully: {counts}")
+        return jsonify(counts), 200
+    except Exception as e:
+        logger.error(f"Error retrieving event counts: {e}")
+        return {"error": "Internal server error"}, 500
 
 # New endpoints for fetching event IDs and trace IDs
 def get_energy_consumption_ids():

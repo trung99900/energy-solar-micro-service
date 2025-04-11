@@ -137,6 +137,58 @@ paths:
           description: Invalid request
         '500':
           description: Internal server error
+
+  /events/count:
+    get:
+      summary: Get event counts from the Kafka queue
+      operationId: app.get_event_counts
+      responses:
+        "200":
+          description: Successfully retrieved event counts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  energy_consumption:
+                    type: integer
+                  solar_generation:
+                    type: integer
+        "500":
+          description: Internal server error
+
+  /events/ids:
+    get:
+      summary: Get event IDs and trace IDs from the Kafka queue
+      operationId: app.get_event_ids
+      responses:
+        "200":
+          description: Successfully retrieved event IDs and trace IDs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  energy_consumption:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        event_id:
+                          type: integer
+                        trace_id:
+                          type: string
+                  solar_generation:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        event_id:
+                          type: integer
+                        trace_id:
+                          type: string
+        "500":
+          description: Internal server error
                 
 components:
   schemas:

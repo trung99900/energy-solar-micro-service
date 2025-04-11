@@ -52,3 +52,59 @@ paths:
                     type: string  
                   code:  
                     type: integer
+
+  /events/count:
+    get:
+      summary: Get event counts
+      operationId: app.get_event_counts
+      responses:
+        "200":
+          description: Successfully retrieved event counts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  energy_consumption:
+                    type: integer
+                  solar_generation:
+                    type: integer
+        "404":
+          description: No statistics available
+        "500":
+          description: Internal server error
+
+  /events/ids:
+    get:
+      summary: Get event IDs and trace IDs
+      operationId: app.get_event_ids
+      responses:
+        "200":
+          description: Successfully retrieved event IDs and trace IDs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  energy_consumption:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        event_id:
+                          type: integer
+                        trace_id:
+                          type: string
+                  solar_generation:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        event_id:
+                          type: integer
+                        trace_id:
+                          type: string
+        "501":
+          description: Not implemented
+        "500":
+          description: Internal server error
