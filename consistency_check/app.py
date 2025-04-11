@@ -25,21 +25,17 @@ def update_consistency_check():
 
     try:
         # Fetch counts and IDs from services
-        logger.info("Fetching stats from processing service...")
-        processing_stats = requests.get(app_config['processing']['url'] + '/events/count').json()
-
-        logger.info("Fetching stats and IDs from analyzer service...")
-        analyzer_stats = requests.get(app_config['analyzer']['url'] + '/events/count').json()
-        analyzer_ids = requests.get(app_config['analyzer']['url'] + '/events/ids').json()
-
-        logger.info("Fetching stats and IDs from storage service...")
-        storage_stats = requests.get(app_config['storage']['url'] + '/events/count').json()
-        storage_ids = requests.get(app_config['storage']['url'] + '/events/ids').json()
+        processing_stats = requests.get(f"{app_config['processing']['url']}/events/count").json()
+        analyzer_stats = requests.get(f"{app_config['analyzer']['url']}/events/count").json()
+        analyzer_ids = requests.get(f"{app_config['analyzer']['url']}/events/ids").json()
+        storage_stats = requests.get(f"{app_config['storage']['url']}/events/count").json()
+        storage_ids = requests.get(f"{app_config['storage']['url']}/events/ids").json()
+        logger.info("Successfully fetched stats from services.")
     except requests.exceptions.RequestException as e:
-        logger.error(f"Error during HTTP request: {e}")
+        logger.error(f"Error during HTTP request to services: {e}")
         return {"message": "Error fetching data from services"}, 500
     except json.JSONDecodeError as e:
-        logger.error(f"Error decoding JSON response: {e}")
+        logger.error(f"Error decoding JSON response from services: {e}")
         return {"message": "Error parsing JSON from services"}, 500
 
     # Compare IDs
@@ -52,7 +48,7 @@ def update_consistency_check():
         "counts": {
             "processing": processing_stats,
             "analyzer": analyzer_stats,
-            "storage": storage_stats
+            "storage": storage_stats,
         },
         "missing_in_db": missing_in_db,
         "missing_in_queue": missing_in_queue,
@@ -61,13 +57,15 @@ def update_consistency_check():
     try:
         with open(app_config['datastore']['filename'], 'w') as f:
             json.dump(results, f)
+            logger.info("Results successfully saved to datastore.")
     except IOError as e:
         logger.error(f"Error writing to datastore: {e}")
         return {"message": "Error saving results to datastore"}, 500
 
     processing_time = int((time.time() - start_time) * 1000)
-    logger.info(f"Consistency check completed | processing_time_ms={processing_time} | "
-                f"missing_in_db={len(missing_in_db)} | missing_in_queue={len(missing_in_queue)}")
+    logger.info(
+        f"Consistency check completed | processing_time_ms={processing_time} | missing_in_db={len(missing_in_db)} | missing_in_queue={len(missing_in_queue)}"
+    )
 
     return {"processing_time_ms": processing_time}, 200
 
@@ -79,7 +77,8 @@ def get_checks():
             results = json.load(f)
         return results, 200
     except FileNotFoundError:
-        return {"message": "No consistency check results found"}, 404
+        logger.warning("No consistency checks have been run yet.")
+        return {"message": "No consistency checks found"}, 404
     except json.JSONDecodeError as e:
         logger.error(f"Error reading JSON from datastore: {e}")
         return {"message": "Error reading results from datastore"}, 500
