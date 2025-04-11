@@ -104,7 +104,7 @@ paths:
                 items:  
                   $ref: '#/components/schemas/SolarGenerationEvent'
 
-  /storage/stats:
+  /stats:
     get:
       summary: Retrieve event counts from the database
       description: | 
@@ -129,7 +129,7 @@ paths:
                     example: 200
         '500':
           description: Internal server error
-  /storage/event-ids/{event_type}:
+  /event-ids/{event_type}:
     get:
       summary: Retrieve event IDs and trace IDs
       description: | 
