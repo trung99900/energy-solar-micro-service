@@ -235,9 +235,8 @@ def start_kafka_consumer():
     logger.info("Kafka consumer thread started.") 
 
 # Create the Connexion app  
-app = connexion.FlaskApp(__name__, specification_dir='')  
-# app.add_api("openapi.yml", strict_validation=True, validate_responses=True) 
-app.add_api("openapi.yml", base_path="/storage", strict_validation=True, validate_responses=True) 
+app = connexion.FlaskApp(__name__, specification_dir='')
+app.add_api("openapi.yml", base_path="/storage", strict_validation=True, validate_responses=True)
 
 if __name__ == "__main__":
     # Run the consumer in a separate thread  

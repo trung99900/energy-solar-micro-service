@@ -37,14 +37,12 @@ paths:
           schema:  
             type: string  
             format: date-time
-            # example: "2025-01-09T12:00:00Z"  
         - name: end_timestamp  
           in: query  
           required: true  
           schema:  
             type: string  
             format: date-time  
-            # example: "2025-01-09T12:00:00Z"
       responses:  
         '200':  
           description: Successfully retrieved energy consumption events  
@@ -86,14 +84,12 @@ paths:
           schema:  
             type: string  
             format: date-time  
-            # example: "2025-01-09T12:00:00Z"
         - name: end_timestamp  
           in: query  
           required: true  
           schema:  
             type: string  
             format: date-time  
-            # example: "2025-01-09T12:00:00Z"
       responses:  
         '200':  
           description: Successfully retrieved events  
