@@ -13,9 +13,9 @@ from dateutil import parser
 from sqlalchemy import create_engine, select, func
 from sqlalchemy.orm import sessionmaker
 
-# Load the configuration from app_conf.yml  
-with open('config/app_conf_dev.yml', 'r') as f:  
-    app_config = yaml.safe_load(f.read())  
+# Load the configuration from app_conf.yml
+with open('config/app_conf_dev.yml', 'r') as f:
+    app_config = yaml.safe_load(f.read())
 
 # Configure logging
 with open('config/log_conf_dev.yml', 'r') as f:
@@ -25,156 +25,156 @@ with open('config/log_conf_dev.yml', 'r') as f:
 
 logger = logging.getLogger('basicLogger')
 
-# Extract database configuration details from the config file  
-db_config = app_config['datastore']  
-user = db_config['user']  
-password = db_config['password']  
-hostname = db_config['hostname']  
-port = db_config['port']  
-db = db_config['db'] 
+# Extract database configuration details from the config file
+db_config = app_config['datastore']
+user = db_config['user']
+password = db_config['password']
+hostname = db_config['hostname']
+port = db_config['port']
+db = db_config['db']
 
 # Create the SQLAlchemy engine using the database configuration
 engine = create_engine(f'mysql://{user}:{password}@{hostname}:{port}/{db}')
 Base.metadata.bind = engine
-DBSession = sessionmaker(bind=engine)  
+DBSession = sessionmaker(bind=engine)
 
-def process_messages():  
-    """ Process event messages """  
-    # Connect to Kafka  
+def process_messages():
+    """ Process event messages """
+    # Connect to Kafka
     kafka_host = f"{app_config['events']['hostname']}:{app_config['events']['port']}"
     client = KafkaClient(hosts=kafka_host)
     topic = client.topics[str.encode(app_config['events']['topic'])]
-    
+
     # Create a consume on a consumer group, that only reads new messages
     # (uncommitted messages) when the service re-starts (i.e., it doesn't
-    # read all the old messages from the history in the message queue).  
-    consumer = topic.get_simple_consumer(  
-        consumer_group=b'event_group',  
-        reset_offset_on_start=False,  
-        auto_offset_reset=OffsetType.LATEST  
+    # read all the old messages from the history in the message queue).
+    consumer = topic.get_simple_consumer(
+        consumer_group=b'event_group',
+        reset_offset_on_start=False,
+        auto_offset_reset=OffsetType.LATEST
     )
-    # This is a blocking loop - it will wait for new messages  
-    for msg in consumer:        
-        msg_str = msg.value.decode('utf-8')  
-        msg = json.loads(msg_str)  
+    # This is a blocking loop - it will wait for new messages
+    for msg in consumer:
+        msg_str = msg.value.decode('utf-8')
+        msg = json.loads(msg_str)
         logger.info("consummed message: %s" % msg)
 
-        payload = msg["payload"]            
+        payload = msg["payload"]
 
-        # Process based on the event type  
-        if msg["type"] == "energy-consumption":  
+        # Process based on the event type
+        if msg["type"] == "energy-consumption":
             receive_energy_consumption_event(payload)
         elif msg["type"] == "solar-generation":
-            receive_solar_generation_event(payload) 
+            receive_solar_generation_event(payload)
 
-        # Commit the new message as being read  
+        # Commit the new message as being read
         consumer.commit_offsets()
 
-def get_energy_consumption_event(start_timestamp, end_timestamp):  
-    """ Get solar generation events filtered by timestamps """  
-    try:  
-        # start = datetime.datetime.fromisoformat(start_timestamp)  
+def get_energy_consumption_event(start_timestamp, end_timestamp):
+    """ Get solar generation events filtered by timestamps """
+    try:
+        # start = datetime.datetime.fromisoformat(start_timestamp)
         # end = datetime.datetime.fromisoformat(end_timestamp)
         start = parser.parse(start_timestamp)
         end = parser.parse(end_timestamp)
-    except ValueError:  
+    except ValueError:
         logger.error("Invalid timestamp format")
-        return {"error": "Invalid timestamp format"}, 400  
+        return {"error": "Invalid timestamp format"}, 400
 
-    session = DBSession()  
-    try:  
+    session = DBSession()
+    try:
         # Query energy consumption events within the given time range
-        statement = select(EnergyConsumption).where(  
-            EnergyConsumption.date_created >= start,  
-            EnergyConsumption.date_created < end  
-        )  
+        statement = select(EnergyConsumption).where(
+            EnergyConsumption.date_created >= start,
+            EnergyConsumption.date_created < end
+        )
         results = [
-            result.to_dict() 
+            result.to_dict()
             for result in session.execute(statement).scalars().all()
         ]
         logger.info("Found %d energy consumption readings (start: %s, end: %s)", len(results), start, end)
-        return jsonify(results), 200  
+        return jsonify(results), 200
     except Exception as e:
-        logger.error("Error querying energy consumption events: %s", str(e))  
-        return {"error": "Internal server error"}, 500  
-    finally:  
-        session.close()    
+        logger.error("Error querying energy consumption events: %s", str(e))
+        return {"error": "Internal server error"}, 500
+    finally:
+        session.close()
 
-def get_solar_generation_event(start_timestamp, end_timestamp):  
-    """ Get solar generation events filtered by timestamps """  
-    try:  
-        # Parse timestamps to datetime objects  
-        # start = datetime.datetime.fromisoformat(start_timestamp)  
+def get_solar_generation_event(start_timestamp, end_timestamp):
+    """ Get solar generation events filtered by timestamps """
+    try:
+        # Parse timestamps to datetime objects
+        # start = datetime.datetime.fromisoformat(start_timestamp)
         # end = datetime.datetime.fromisoformat(end_timestamp)
         start = parser.parse(start_timestamp)
         end = parser.parse(end_timestamp)
-    except ValueError:  
-        logger.error("Invalid timestamp format")  
-        return {"error": "Invalid timestamp format"}, 400  
+    except ValueError:
+        logger.error("Invalid timestamp format")
+        return {"error": "Invalid timestamp format"}, 400
 
-    session = DBSession()  
-    try:  
-        # Query solar generation events within the given range  
-        statement = select(SolarGeneration).where(  
-            SolarGeneration.date_created >= start,  
-            SolarGeneration.date_created < end  
-        )  
-        results = [  
-            result.to_dict()  
-            for result in session.execute(statement).scalars().all()  
-        ]  
-        logger.info("Found %d solar generation readings (start: %s, end: %s)", len(results), start, end)  
-        return jsonify(results), 200  
-    except Exception as e:  
-        logger.error("Error querying solar generation events: %s", str(e))  
-        return {"error": "Internal server error"}, 500  
-    finally:  
+    session = DBSession()
+    try:
+        # Query solar generation events within the given range
+        statement = select(SolarGeneration).where(
+            SolarGeneration.date_created >= start,
+            SolarGeneration.date_created < end
+        )
+        results = [
+            result.to_dict()
+            for result in session.execute(statement).scalars().all()
+        ]
+        logger.info("Found %d solar generation readings (start: %s, end: %s)", len(results), start, end)
+        return jsonify(results), 200
+    except Exception as e:
+        logger.error("Error querying solar generation events: %s", str(e))
+        return {"error": "Internal server error"}, 500
+    finally:
         session.close()
 
-def receive_energy_consumption_event(event):  
-    """Store an energy consumption event into the database."""  
+def receive_energy_consumption_event(event):
+    """Store an energy consumption event into the database."""
     logger.debug(f"finally")
-    session = DBSession()  
-    try:  
-        ec = EnergyConsumption(  
-            event["device_id"],  
-            event["timestamp"],  
-            event["energy_consumed"],  
-            event["voltage"],  
-            event["trace_id"]  
-        )  
-        session.add(ec)  
-        session.commit()  
-        logger.info(f"Stored Energy Consumption event with trace_id {event['trace_id']}")  
-    except Exception as e:  
-        logger.error(f"Error storing Energy Consumption event: {e}")  
-        session.rollback()  
-    finally:  
-        session.close()  
-
-def receive_solar_generation_event(event):  
-    logger.info(event)
-    """Store a solar generation event into the database."""  
-    session = DBSession()  
-    try:  
-        sg = SolarGeneration(  
-            event["device_id"],  
-            event["timestamp"],  
-            event["power_generated"],  
-            event["temperature"],  
-            event["trace_id"]  
-        )  
-        session.add(sg)  
-        session.commit()  
-        logger.info(f"Stored Solar Generation event with trace_id {event['trace_id']}")  
-    except Exception as e:  
-        logger.error(f"Error storing Solar Generation event: {e}")  
-        session.rollback()  
-    finally:  
+    session = DBSession()
+    try:
+        ec = EnergyConsumption(
+            event["device_id"],
+            event["timestamp"],
+            event["energy_consumed"],
+            event["voltage"],
+            event["trace_id"]
+        )
+        session.add(ec)
+        session.commit()
+        logger.info(f"Stored Energy Consumption event with trace_id {event['trace_id']}")
+    except Exception as e:
+        logger.error(f"Error storing Energy Consumption event: {e}")
+        session.rollback()
+    finally:
         session.close()
 
-def setup_kafka_thread():  
-    """ Create threads to consume messages from multiple topics """  
+def receive_solar_generation_event(event):
+    logger.info(event)
+    """Store a solar generation event into the database."""
+    session = DBSession()
+    try:
+        sg = SolarGeneration(
+            event["device_id"],
+            event["timestamp"],
+            event["power_generated"],
+            event["temperature"],
+            event["trace_id"]
+        )
+        session.add(sg)
+        session.commit()
+        logger.info(f"Stored Solar Generation event with trace_id {event['trace_id']}")
+    except Exception as e:
+        logger.error(f"Error storing Solar Generation event: {e}")
+        session.rollback()
+    finally:
+        session.close()
+
+def setup_kafka_thread():
+    """ Create threads to consume messages from multiple topics """
     t = Thread(target=process_messages)
     t.setDaemon(True)
     t.start()
@@ -232,13 +232,13 @@ def start_kafka_consumer():
     thread = Thread(target=process_messages)
     thread.daemon = True
     thread.start()
-    logger.info("Kafka consumer thread started.") 
+    logger.info("Kafka consumer thread started.")
 
-# Create the Connexion app  
+# Create the Connexion app
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yml", base_path="/storage", strict_validation=True, validate_responses=True)
 
 if __name__ == "__main__":
-    # Run the consumer in a separate thread  
+    # Run the consumer in a separate thread
     setup_kafka_thread()
     app.run(port=8090, host="0.0.0.0")

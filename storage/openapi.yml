@@ -1,110 +1,110 @@
 openapi: 3.0.0
-info:  
-  title: Event Receiver API  
+info:
+  title: Event Receiver API
   description: A RESTful API for receiving events from devices or applications.
   contact:
     email: tnguyen571@my.bcit.ca
   version: 1.0.0
-paths:  
-  /events/energy-consumption:  
-    # post:  
-    #   summary: Receive energy consumption event  
-    #   description: Endpoint to receive energy consumption readings from devices or applications.  
-    #   operationId: app.receiveEnergyConsumptionEvent  
-    #   requestBody:  
-    #     description: Energy consumption event data  
-    #     required: true  
-    #     content:  
-    #       application/json:  
-    #         schema:  
-    #           $ref: '#/components/schemas/EnergyConsumptionEvent'  
-    #   responses:  
-    #     '201':  
-    #       description: Item created  
-    #     '400':  
+paths:
+  /events/energy-consumption:
+    # post:
+    #   summary: Receive energy consumption event
+    #   description: Endpoint to receive energy consumption readings from devices or applications.
+    #   operationId: app.receiveEnergyConsumptionEvent
+    #   requestBody:
+    #     description: Energy consumption event data
+    #     required: true
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: '#/components/schemas/EnergyConsumptionEvent'
+    #   responses:
+    #     '201':
+    #       description: Item created
+    #     '400':
     #       description: "Invalid input, object invalid"
-    
+
     get:
       tags:
         - energy consumption
-      summary: Get energy consumption events  
-      description: Retrieve energy consumption events within a specific time range.  
-      operationId: app.get_energy_consumption_event  
-      parameters:  
-        - name: start_timestamp  
-          in: query  
-          required: true  
-          schema:  
-            type: string  
+      summary: Get energy consumption events
+      description: Retrieve energy consumption events within a specific time range.
+      operationId: app.get_energy_consumption_event
+      parameters:
+        - name: start_timestamp
+          in: query
+          required: true
+          schema:
+            type: string
             format: date-time
-        - name: end_timestamp  
-          in: query  
-          required: true  
-          schema:  
-            type: string  
-            format: date-time  
-      responses:  
-        '200':  
-          description: Successfully retrieved energy consumption events  
-          content:  
-            application/json:  
-              schema:  
-                type: array  
-                items:  
-                  $ref: '#/components/schemas/EnergyConsumptionEvent'        
+        - name: end_timestamp
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Successfully retrieved energy consumption events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EnergyConsumptionEvent'
 
-  /events/solar-generation:  
-    # post:  
-    #   summary: Receive solar generation event  
-    #   description: Endpoint to receive solar power generation readings from devices or applications.  
-    #   operationId: app.receiveSolarGenerationEvent    
-    #   requestBody:  
-    #     description: Solar generation event data  
-    #     required: true  
-    #     content:  
-    #       application/json:  
-    #         schema:  
-    #           $ref: '#/components/schemas/SolarGenerationEvent'  
-    #   responses:  
-    #     '201':  
-    #       description: Item created  
-    #     '400':  
+  /events/solar-generation:
+    # post:
+    #   summary: Receive solar generation event
+    #   description: Endpoint to receive solar power generation readings from devices or applications.
+    #   operationId: app.receiveSolarGenerationEvent
+    #   requestBody:
+    #     description: Solar generation event data
+    #     required: true
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: '#/components/schemas/SolarGenerationEvent'
+    #   responses:
+    #     '201':
+    #       description: Item created
+    #     '400':
     #       description: "invalid input, object invalid"
-    
+
     get:
       tags:
         - solar generation
-      summary: Get solar generation events  
-      description: Retrieve solar generation events within a specific time range.  
-      operationId: app.get_solar_generation_event  
-      parameters:  
-        - name: start_timestamp  
-          in: query  
-          required: true  
-          schema:  
-            type: string  
-            format: date-time  
-        - name: end_timestamp  
-          in: query  
-          required: true  
-          schema:  
-            type: string  
-            format: date-time  
-      responses:  
-        '200':  
-          description: Successfully retrieved events  
-          content:  
-            application/json:  
-              schema:  
-                type: array  
-                items:  
+      summary: Get solar generation events
+      description: Retrieve solar generation events within a specific time range.
+      operationId: app.get_solar_generation_event
+      parameters:
+        - name: start_timestamp
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: end_timestamp
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Successfully retrieved events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
                   $ref: '#/components/schemas/SolarGenerationEvent'
 
   /stats:
     get:
       summary: Retrieve event counts from the database
-      description: | 
-        Returns the total number of records for each event type in the database. 
+      description: |
+        Returns the total number of records for each event type in the database.
         This includes counts for `energy-consumption` and `solar-generation` events.
       operationId: app.get_event_counts  # Maps to the "get_event_counts" function
       responses:
@@ -128,8 +128,8 @@ paths:
   /event-ids/{event_type}:
     get:
       summary: Retrieve event IDs and trace IDs
-      description: | 
-        Returns event IDs and trace IDs for a given event type. 
+      description: |
+        Returns event IDs and trace IDs for a given event type.
         Two types of events are supported: `energy-consumption` and `solar-generation`.
       operationId: app.get_event_ids  # Maps to the "get_event_ids" function
       parameters:
@@ -217,71 +217,71 @@ paths:
         "500":
           description: Internal server error
 
-components:  
-  schemas:  
-    EnergyConsumptionEvent:  
-      type: object  
-      required:  
-        - device_id  
-        - timestamp  
-        - energy_consumed  
+components:
+  schemas:
+    EnergyConsumptionEvent:
+      type: object
+      required:
+        - device_id
+        - timestamp
+        - energy_consumed
         - voltage
         - trace_id
-      properties:  
-        device_id:  
-          type: string  
-          format: uuid  
-          description: Unique identifier for the device sending the event  
-          example: "123e4567-e89b-12d3-a456-426614174000"  
-        timestamp:  
-          type: string  
-          format: date-time  
-          description: The time the event occurred, in ISO 8601 format  
-          example: "2025-01-09T12:00:00Z"  
-        energy_consumed:  
-          type: number  
-          format: float  
-          description: The amount of energy consumed in kilowatt-hours (kWh)  
-          example: 5.2  
-        voltage:  
-          type: number  
-          format: float  
-          description: The voltage level recorded by the device (in volts)  
-          example: 230.5 
+      properties:
+        device_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the device sending the event
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        timestamp:
+          type: string
+          format: date-time
+          description: The time the event occurred, in ISO 8601 format
+          example: "2025-01-09T12:00:00Z"
+        energy_consumed:
+          type: number
+          format: float
+          description: The amount of energy consumed in kilowatt-hours (kWh)
+          example: 5.2
+        voltage:
+          type: number
+          format: float
+          description: The voltage level recorded by the device (in volts)
+          example: 230.5
         trace_id:
           type: string
           format: uuid
           description: Unique identifier for the trace
           example: "123e4567-e89b-12d3-a456-426614174000"
 
-    SolarGenerationEvent:  
-      type: object  
-      required:  
-        - device_id  
-        - timestamp  
-        - power_generated  
+    SolarGenerationEvent:
+      type: object
+      required:
+        - device_id
+        - timestamp
+        - power_generated
         - temperature
         - trace_id
-      properties:  
-        device_id:  
-          type: string  
-          format: uuid  
-          description: Unique identifier for the device sending the event  
-          example: "123e4567-e89b-12d3-a456-426614174000"  
-        timestamp:  
-          type: string  
-          format: date-time  
-          description: The time the event occurred, in ISO 8601 format  
-          example: "2025-01-09T12:00:00Z"  
-        power_generated:  
-          type: number  
-          format: float  
-          description: The amount of solar power generated in kilowatt-hours (kWh)  
-          example: 8.7  
-        temperature:  
-          type: number  
-          format: float  
-          description: The temperature of the solar inverter in degrees Celsius  
+      properties:
+        device_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the device sending the event
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        timestamp:
+          type: string
+          format: date-time
+          description: The time the event occurred, in ISO 8601 format
+          example: "2025-01-09T12:00:00Z"
+        power_generated:
+          type: number
+          format: float
+          description: The amount of solar power generated in kilowatt-hours (kWh)
+          example: 8.7
+        temperature:
+          type: number
+          format: float
+          description: The temperature of the solar inverter in degrees Celsius
           example: 45.3
         trace_id:
           type: string
