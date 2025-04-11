@@ -6,3 +6,9 @@ storage:
   url: "http://storage:8090"
 datastore:
   filename: "app/data/consistency_check.json"
+
+events:  
+  hostname: kafka
+  port: 9092
+  topic: events
+  group_id: "consistency_group"

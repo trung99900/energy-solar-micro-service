@@ -94,20 +94,14 @@ def get_event_stats():
         return {"message": "Internal server error"}, 500
     
 def get_event_ids(event_type):
-    """Retrieve all event IDs and trace IDs for a given event type."""
-    logger.info(f"Fetching event IDs for {event_type}")
+    """
+    Retrieve all event IDs and trace IDs for a given event type.
+    """
+    logger.info(f"Fetching event IDs and trace IDs for {event_type}")
     try:
-        client = KafkaClient(hosts=f"{app_config['events']['hostname']}:{app_config['events']['port']}")
+        client = KafkaClient(hosts=f"{app_config['events']['hostname']}")
 
-        # Select appropriate Kafka topic
-        if event_type == "energy-consumption":
-            topic = client.topics[app_config['events']['topic'].encode()]
-        elif event_type == "solar-generation":
-            topic = client.topics[app_config['events']['topic'].encode()]
-        else:
-            logger.error("Invalid event type provided")
-            return {"message": "Invalid event type provided."}, 400
-
+        topic = client.topics[app_config['events']['topic'].encode()]
         consumer = topic.get_simple_consumer(reset_offset_on_start=True, consumer_timeout_ms=1000)
 
         events = []
@@ -118,11 +112,12 @@ def get_event_ids(event_type):
             message = msg.value.decode('utf-8')
             data = json.loads(message)
 
-            # Append event_id and trace_id to the results
-            events.append({
-                "event_id": data["payload"]["event_id"],
-                "trace_id": data["payload"]["trace_id"]
-            })
+            # Include only events matching the given type
+            if data["type"] == event_type:
+                events.append({
+                    "event_id": data["payload"]["event_id"],
+                    "trace_id": data["payload"]["trace_id"]
+                })
 
         logger.info(f"Retrieved {len(events)} events for {event_type}")
         return jsonify(events), 200
@@ -131,13 +126,19 @@ def get_event_ids(event_type):
         logger.error(f"Error retrieving event IDs: {e}")
         return {"message": "Internal server error"}, 500
 
+
 # New endpoints for fetching event IDs and trace IDs
 def get_energy_consumption_ids():
-    """Retrieve event IDs and trace IDs for energy-consumption events from Kafka."""
+    """
+    Retrieve event IDs and trace IDs for energy-consumption events from Kafka.
+    """
     return get_event_ids("energy-consumption")
 
+
 def get_solar_generation_ids():
-    """Retrieve event IDs and trace IDs for solar-generation events from Kafka."""
+    """
+    Retrieve event IDs and trace IDs for solar-generation events from Kafka.
+    """
     return get_event_ids("solar-generation")
 
 # Create the Connexion app  

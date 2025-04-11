@@ -8,45 +8,50 @@
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="ACIT3855 statistics application" />
     <title>ACIT3855 - Dashboard</title>
-    <script src="./stats.js"></script>
+    <script src="./stats.js" defer></script>
 </head>
 
 <body>
     <main>
         <!-- Header Section -->
-        <div id="header">
+        <header id="header">
             <img src="./solar-energy-logo.jpg" alt="Solar Logo" />
-            <h1>Dashboard</h1>
-            <h5 id="last-updated">Last update: <span id="last-updated-value">N/A</span></h5>
-        </div>
+            <h1>ACIT3855 Statistics Dashboard</h1>
+            <h5 id="last-updated">Last updated: <span id="last-updated-value">N/A</span></h5>
+        </header>
 
         <!-- Consistency Check Controls -->
-        <section id="consistency-checks">
-            <h2>Manage Consistency Checks</h2>
-            <!-- Trigger Check -->
+        <section id="consistency-check-controls">
+            <h2>Consistency Check Controls</h2>
+            <!-- Trigger Consistency Check -->
             <button id="trigger-check-btn">Run Consistency Check</button>
         </section>
 
-        <!-- Consistency Results -->
-        <section id="consistency-results">
-            <h2>Latest Consistency Check Results</h2>
+        <!-- Consistency Check Results -->
+        <section id="consistency-check-results">
+            <h2>Consistency Check Results</h2>
             <div id="check-results">
+                <!-- Database Counts -->
                 <div class="card">
                     <h3>Database Counts</h3>
                     <pre id="db-stats">N/A</pre>
                 </div>
+                <!-- Queue Counts -->
                 <div class="card">
                     <h3>Queue Counts</h3>
                     <pre id="queue-stats">N/A</pre>
                 </div>
+                <!-- Processing Counts -->
                 <div class="card">
                     <h3>Processing Counts</h3>
                     <pre id="processing-stats-result">N/A</pre>
                 </div>
+                <!-- Missing in Database -->
                 <div class="card">
                     <h3>Missing in Database</h3>
                     <pre id="missing-in-db">N/A</pre>
                 </div>
+                <!-- Missing in Queue -->
                 <div class="card">
                     <h3>Missing in Queue</h3>
                     <pre id="missing-in-queue">N/A</pre>
@@ -55,39 +60,50 @@
         </section>
 
         <!-- Statistics Section -->
-        <h2>Statistics</h2>
-        <div id="statistics">
-            <div class="card">
-                <h3>Processing Stats</h3>
-                <code id="processing-stats">Placeholder value - processing stats should appear here</code>
+        <section id="statistics">
+            <h2>Overall Statistics</h2>
+            <div id="statistics-cards">
+                <!-- Processing Statistics -->
+                <div class="card">
+                    <h3>Processing Statistics</h3>
+                    <pre id="processing-stats">Placeholder - Processing statistics will appear here</pre>
+                </div>
+                <!-- Analyzer Statistics -->
+                <div class="card">
+                    <h3>Analyzer Statistics</h3>
+                    <pre id="analyzer-stats">Placeholder - Analyzer statistics will appear here</pre>
+                </div>
             </div>
-            <div class="card">
-                <h3>Analyzer Stats</h3>
-                <code id="analyzer-stats">Placeholder value - analyzer stats should appear here</code>
-            </div>
-        </div>
+        </section>
 
         <!-- Analyzer Events Section -->
-        <h2>Analyzer Events</h2>
-        <div id="analyzer-events">
-            <div class="card">
-                <h3>Energy Consumption Event</h3>
-                <code id="event-energy-consumption">Placeholder value - energy consumption events will appear here</code>
+        <section id="analyzer-events">
+            <h2>Analyzer Events</h2>
+            <div id="analyzer-event-cards">
+                <!-- Energy Consumption Events -->
+                <div class="card">
+                    <h3>Energy Consumption Events</h3>
+                    <pre id="event-energy-consumption">Placeholder - Energy consumption event details will appear here</pre>
+                </div>
+                <!-- Solar Generation Events -->
+                <div class="card">
+                    <h3>Solar Generation Events</h3>
+                    <pre id="event-solar-generation">Placeholder - Solar generation event details will appear here</pre>
+                </div>
             </div>
-            <div class="card">
-                <h3>Solar Generation</h3>
-                <code id="event-solar-generation">Placeholder value - solar generation events will appear here</code>
-            </div>
-        </div>
+        </section>
 
-        <!-- Messages/Error Log -->  
-        <div id="messages" style="display: none;">  
-            <!-- Error messages will appear here -->  
-        </div>
+        <!-- Messages / Error Logs -->
+        <section id="messages-section">
+            <h2>Error Logs</h2>
+            <div id="messages" style="display: none;">
+                <!-- Error messages will dynamically appear here -->
+            </div>
+        </section>
 
         <!-- Footer -->
         <footer>
-            © 2025 ACIT3855 Statistics Dashboard
+            <p>© 2025 ACIT3855 Statistics Dashboard</p>
         </footer>
     </main>
 </body>

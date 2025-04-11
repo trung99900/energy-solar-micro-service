@@ -17,21 +17,30 @@ with open('config/log_conf_dev.yml', 'r') as f:
 
 logger = logging.getLogger('basicLogger')
 
+
 def update_consistency_check():
+    """Perform consistency checks for event counts and IDs across services."""
     start_time = time.time()
     logger.info("Starting consistency check...")
 
-    # Fetch counts and IDs from services
     try:
-        processing_stats = requests.get(app_config['processing']['url'] + '/stats').json()
-        analyzer_stats = requests.get(app_config['analyzer']['url'] + '/stats').json()
-        storage_stats = requests.get(app_config['storage']['url'] + '/stats').json()
+        # Fetch counts and IDs from services
+        logger.info("Fetching stats from processing service...")
+        processing_stats = requests.get(app_config['processing']['url'] + '/events/count').json()
 
-        analyzer_ids = requests.get(app_config['analyzer']['url'] + '/ids').json()
-        storage_ids = requests.get(app_config['storage']['url'] + '/ids').json()
-    except Exception as e:
-        logger.error(f"Error fetching data from services: {e}")
+        logger.info("Fetching stats and IDs from analyzer service...")
+        analyzer_stats = requests.get(app_config['analyzer']['url'] + '/events/count').json()
+        analyzer_ids = requests.get(app_config['analyzer']['url'] + '/events/ids').json()
+
+        logger.info("Fetching stats and IDs from storage service...")
+        storage_stats = requests.get(app_config['storage']['url'] + '/events/count').json()
+        storage_ids = requests.get(app_config['storage']['url'] + '/events/ids').json()
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Error during HTTP request: {e}")
         return {"message": "Error fetching data from services"}, 500
+    except json.JSONDecodeError as e:
+        logger.error(f"Error decoding JSON response: {e}")
+        return {"message": "Error parsing JSON from services"}, 500
 
     # Compare IDs
     missing_in_db = [event for event in analyzer_ids if event not in storage_ids]
@@ -46,11 +55,15 @@ def update_consistency_check():
             "storage": storage_stats
         },
         "missing_in_db": missing_in_db,
-        "missing_in_queue": missing_in_queue
+        "missing_in_queue": missing_in_queue,
     }
 
-    with open(app_config['datastore']['filename'], 'w') as f:
-        json.dump(results, f)
+    try:
+        with open(app_config['datastore']['filename'], 'w') as f:
+            json.dump(results, f)
+    except IOError as e:
+        logger.error(f"Error writing to datastore: {e}")
+        return {"message": "Error saving results to datastore"}, 500
 
     processing_time = int((time.time() - start_time) * 1000)
     logger.info(f"Consistency check completed | processing_time_ms={processing_time} | "
@@ -58,20 +71,32 @@ def update_consistency_check():
 
     return {"processing_time_ms": processing_time}, 200
 
+
 def get_checks():
+    """Fetch the most recent consistency check results."""
     try:
         with open(app_config['datastore']['filename'], 'r') as f:
             results = json.load(f)
         return results, 200
     except FileNotFoundError:
         return {"message": "No consistency check results found"}, 404
+    except json.JSONDecodeError as e:
+        logger.error(f"Error reading JSON from datastore: {e}")
+        return {"message": "Error reading results from datastore"}, 500
 
-# Create the Connexion app  
+
+# Create the Connexion app
 app = connexion.FlaskApp(__name__, specification_dir='')
 print("Loading API specification...")
-app.add_api("consistency_check.yml", base_path="/consistency_check", strict_validation=True, validate_responses=True)
+app.add_api(
+    "consistency_check.yml",
+    base_path="/consistency_check",
+    strict_validation=True,
+    validate_responses=True
+)
 
-if "CORS_ALLOW_ALL" in os.environ and os.environ["CORS_ALLOW_ALL"] == "yes":
+# Add CORS middleware if needed
+if os.getenv("CORS_ALLOW_ALL", "no").lower() == "yes":
     app.add_middleware(
         CORSMiddleware,
         position=MiddlewarePosition.BEFORE_EXCEPTION,
@@ -83,4 +108,3 @@ if "CORS_ALLOW_ALL" in os.environ and os.environ["CORS_ALLOW_ALL"] == "yes":
 
 if __name__ == '__main__':
     app.run(port=8120, host='0.0.0.0')
-    

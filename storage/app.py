@@ -181,22 +181,19 @@ def setup_kafka_thread():
 
 def get_event_counts():
     """
-    Retrieve the count of events in the database for each type.
-    This is referenced in the OpenAPI as operationId: app.get_event_counts.
+    Endpoint to retrieve the count of events in the database for each type.
     """
     session = DBSession()
     try:
-        # Query counts for each event type
         num_energy_consumption = session.query(func.count(EnergyConsumption.id)).scalar()
         num_solar_generation = session.query(func.count(SolarGeneration.id)).scalar()
 
-        # Return the counts as JSON
         response = {
-            "num_energy_consumption": num_energy_consumption,
-            "num_solar_generation": num_solar_generation
+            "energy_consumption": num_energy_consumption,
+            "solar_generation": num_solar_generation
         }
 
-        logger.info(f"Event counts retrieved: {response}")
+        logger.info(f"Event counts retrieved successfully: {response}")
         return jsonify(response), 200
     except Exception as e:
         logger.error(f"Error retrieving event counts: {e}")
@@ -204,10 +201,10 @@ def get_event_counts():
     finally:
         session.close()
 
+
 def get_event_ids(event_type):
     """
-    Retrieve the event and trace IDs for a specific event type.
-    This is referenced in the OpenAPI as operationId: app.get_event_ids.
+    Retrieves event IDs and trace IDs for a specific event type.
     """
     session = DBSession()
     try:
@@ -216,18 +213,28 @@ def get_event_ids(event_type):
         elif event_type == "solar-generation":
             query = session.query(SolarGeneration.id, SolarGeneration.trace_id).all()
         else:
+            logger.error(f"Invalid event type: {event_type}")
             return {"error": "Invalid event type"}, 400
 
-        # Convert results to list of dictionaries
-        results = [{"event_id": row[0], "trace_id": row[1]} for row in query]
+        results = [{"event_id": eid, "trace_id": trace_id} for eid, trace_id in query]
 
-        logger.info(f"{len(results)} {event_type} events retrieved")
+        logger.info(f"Retrieved {len(results)} events for type: {event_type}")
         return jsonify(results), 200
     except Exception as e:
-        logger.error(f"Error retrieving IDs for {event_type}: {e}")
+        logger.error(f"Error retrieving event IDs for {event_type}: {e}")
         return {"error": "Internal server error"}, 500
     finally:
-        session.close() 
+        session.close()
+
+
+def start_kafka_consumer():
+    """
+    Start a background thread to consume Kafka messages.
+    """
+    thread = Thread(target=process_messages)
+    thread.daemon = True
+    thread.start()
+    logger.info("Kafka consumer thread started.") 
 
 # Create the Connexion app  
 app = connexion.FlaskApp(__name__, specification_dir='')  

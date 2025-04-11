@@ -72,7 +72,7 @@ const setup = () => {
 
 document.addEventListener('DOMContentLoaded', setup)
 
-// Fetch the latest consistency check results
+// Fetch the latest consistency check results and update the UI
 const fetchConsistencyChecks = () => {
     fetch(CONSISTENCY_CHECKS_API_URL)
         .then(res => {
@@ -82,7 +82,7 @@ const fetchConsistencyChecks = () => {
             return res.json();
         })
         .then(result => {
-            console.log("Received consistency check results: ", result);
+            console.log("Consistency check results:", result);
             updateConsistencyResults(result);
         })
         .catch(error => {
@@ -90,41 +90,53 @@ const fetchConsistencyChecks = () => {
         });
 };
 
-// Trigger the consistency check (POST to /update)
+// Trigger a consistency check via the API
 const triggerConsistencyCheck = () => {
     fetch(CONSISTENCY_UPDATE_API_URL, { method: "POST" })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) {
+                throw new Error("Failed to trigger consistency check.");
+            }
+            return res.json();
+        })
         .then(result => {
-            console.log("Consistency check triggered", result);
+            console.log("Consistency check triggered:", result);
             updateLastUpdatedTime();
-            fetchConsistencyChecks(); // Reload the results after running the checks
+            fetchConsistencyChecks(); // Reload results after the check completes
         })
         .catch(error => {
             updateErrorMessages(error.message);
         });
 };
 
-// Update consistency results on the page
-const updateConsistencyResults = (result) => {
+// Update the consistency check results dynamically on the UI
+const updateConsistencyResults = result => {
     document.getElementById("last-updated-value").innerText = result.last_updated;
 
     // Update counts
     document.getElementById("db-stats").innerText = JSON.stringify(result.counts.db, null, 2);
     document.getElementById("queue-stats").innerText = JSON.stringify(result.counts.queue, null, 2);
-    document.getElementById("processing-stats").innerText = JSON.stringify(result.counts.processing, null, 2);
+    document.getElementById("processing-stats-result").innerText = JSON.stringify(result.counts.processing, null, 2);
 
-    // Update missing events
+    // Update missing event sections
     document.getElementById("missing-in-db").innerText = JSON.stringify(result.missing_in_db, null, 2);
     document.getElementById("missing-in-queue").innerText = JSON.stringify(result.missing_in_queue, null, 2);
 };
 
-// Update the last updated time when consistency checks are triggered
+// Update the last updated timestamp when a consistency check occurs
 const updateLastUpdatedTime = () => {
-    document.getElementById("last-updated-value").innerText = (new Date()).toLocaleString();
+    document.getElementById("last-updated-value").innerText = getLocaleDateStr();
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Initial fetch of stats and consistency results
+// Initialize event listeners and periodic updates
+document.addEventListener("DOMContentLoaded", () => {
+    // Initial fetch of statistics and consistency data
+    getStats();
     fetchConsistencyChecks();
+
+    // Add event listener for the consistency check button
     document.getElementById("trigger-check-btn").addEventListener("click", triggerConsistencyCheck);
+
+    // Setup periodic updates every 3 seconds
+    setInterval(() => getStats(), 3000);
 });

@@ -1,6 +1,7 @@
 openapi: 3.0.0
 info:
-  description: This API provides consistency checks between the database and the Kafka queue
+  description: |
+    This API provides consistency checks between the records stored in the database and the Kafka message queue.
   version: "1.0.0"
   title: Consistency API
   contact:
@@ -14,12 +15,10 @@ paths:
       description: |
         This endpoint triggers a consistency check by:
         - Fetching event counts and IDs from the processing, analyzer, and storage services.
-        - Comparing the `trace_id` lists from the analyzer and storage services.
-        - Identifying:
-          - Events that are in the queue but not in the database.
-          - Events that are in the database but not in the queue.
-        - Saving the results to a JSON file.
-        Returns the total time (in milliseconds) taken to perform the consistency check.
+        - Comparing the event IDs and Trace IDs between the database and the queue.
+        - Identifying missing events in the database or queue.
+        - Storing the results in a JSON file.
+        The endpoint returns the processing time in milliseconds.
       responses:
         '200':
           description: Consistency check completed successfully.
@@ -29,27 +28,27 @@ paths:
                 type: object
                 properties:
                   processing_time_ms:
-                    type: integer                    
-        
+                    type: integer
+                    description: Time taken to perform the consistency check in milliseconds.
+        '500':
+          description: Internal server error when performing the consistency check.
+
   /checks:
     get:
-      summary: Displays the results of the checks
+      summary: Fetch the results of the most recent consistency check.
       operationId: app.get_checks
       description: |
-        This endpoint retrieves the results of the most recent consistency check from the JSON file.
-        If no consistency checks have been run yet, it returns a 404 error.
+        This endpoint retrieves the results of the latest consistency check from the JSON data store.
+        If no consistency checks have been run, it returns a 404 error.
       responses:
         '200':
-          description: Successfully ran the checks
+          description: Successfully retrieved the results.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  processing_time_ms:
-                    type: integer
+                $ref: '#/components/schemas/ConsistencyCheckResults'
         '404':
-          description: No consistency checks have been run yet.
+          description: No consistency checks found in the data store.
           content:
             application/json:
               schema:
@@ -57,59 +56,69 @@ paths:
                 properties:
                   message:
                     type: string
-        
+                    description: Error message indicating no results are available.
+
 components:
   schemas:
-    Checks:
-      required:
-      - counts
-      - not_in_db
-      - not_in_queue
-      - last_updated
+    ConsistencyCheckResults:
       type: object
+      required:
+        - last_updated
+        - counts
+        - missing_in_db
+        - missing_in_queue
       properties:
         last_updated:
           type: string
           format: date-time
+          description: The timestamp of when the last check was performed.
         counts:
           type: object
           properties:
             db:
               type: object
-              properties:
-                event1:
-                  type: integer
-                event2:
-                  type: integer
+              description: Counts of events in the database, grouped by type.
+              additionalProperties:
+                type: integer
             queue:
               type: object
-              properties:
-                event1:
-                  type: integer
-                event2:
-                  type: integer
+              description: Counts of events in the queue, grouped by type.
+              additionalProperties:
+                type: integer
             processing:
               type: object
-              properties:
-                event1:
-                  type: integer
-                event2:
-                  type: integer
-        not_in_db:
+              description: Counts from the processing service, grouped by type.
+              additionalProperties:
+                type: integer
+        missing_in_db:
           type: array
+          description: List of events present in the queue but missing from the database.
           items:
-            type: object
-            properties:
-              event_id:
-                type: integer
-              trace_id:
-                type: integer
-        not_in_queue:
+            $ref: '#/components/schemas/EventInfo'
+        missing_in_queue:
           type: array
+          description: List of events present in the database but missing from the queue.
           items:
-            type: object
-            properties:
-              event_id:
-                type: integer
-              trace_id:
-                type: integer
+            $ref: '#/components/schemas/EventInfo'
+
+    EventInfo:
+      type: object
+      required:
+        - event_id
+        - trace_id
+        - type
+      properties:
+        event_id:
+          type: integer
+          description: The unique identifier of the event.
+        trace_id:
+          type: string
+          description: The trace identifier associated with the event.
+        type:
+          type: string
+          description: The event type (e.g., snow, lift).
+
+servers:
+  - url: http://localhost:8120/consistency_check
+    description: Local server for the Consistency Check service.
+    
