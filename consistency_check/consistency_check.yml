@@ -29,9 +29,6 @@ paths:
                 properties:
                   processing_time_ms:
                     type: integer
-                    description: Time taken to perform the consistency check in milliseconds.
-        '500':
-          description: Internal server error when performing the consistency check.
 
   /checks:
     get:
@@ -77,47 +74,58 @@ components:
           properties:
             db:
               type: object
-              description: Counts of events in the database, grouped by type.
-              additionalProperties:
+              properties:
+                energy-consumption:
+                  type: integer
+                  description: Count of energy generation events in the database.
+                solar-generation:
+                  type: integer
+                  description: Count of solar generation events in the database.
                 type: integer
             queue:
               type: object
-              description: Counts of events in the queue, grouped by type.
-              additionalProperties:
+              properties:
+                energy-consumption:
+                  type: integer
+                  description: Count of energy generation events in the queue.
+                solar-generation:
+                  type: integer
+                  description: Count of solar generation events in the queue.
                 type: integer
             processing:
               type: object
-              description: Counts from the processing service, grouped by type.
-              additionalProperties:
+              properties:
+                energy-consumption:
+                  type: integer
+                  description: Count of energy generation events in the processing service.
+                solar-generation:
+                  type: integer
+                  description: Count of solar generation events in the processing service.
                 type: integer
         missing_in_db:
           type: array
           description: List of events present in the queue but missing from the database.
           items:
-            $ref: '#/components/schemas/EventInfo'
+            type: object
+            properties:
+              event_id:
+                type: integer
+                format: uuid
+                example: 123e4567-e89b-12d3-a456-426614174000
+              trace_id:
+                type: string
+                format: uuid
+                example: 123e4567-e89b-12d3-a456-426614174000
         missing_in_queue:
           type: array
-          description: List of events present in the database but missing from the queue.
           items:
-            $ref: '#/components/schemas/EventInfo'
-
-    EventInfo:
-      type: object
-      required:
-        - event_id
-        - trace_id
-        - type
-      properties:
-        event_id:
-          type: integer
-          description: The unique identifier of the event.
-        trace_id:
-          type: string
-          description: The trace identifier associated with the event.
-        type:
-          type: string
-          description: The event type (e.g., snow, lift).
-
-servers:
-  - url: http://localhost:8120/consistency_check
-    description: Local server for the Consistency Check service.
+            type: object
+            properties:
+              event_id:
+                type: integer
+                format: uuid
+                example: 123e4567-e89b-12d3-a456-426614174000
+              trace_id:
+                type: string
+                format: uuid
+                example: 123e4567-e89b-12d3-a456-426614174000      

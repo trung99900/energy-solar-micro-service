@@ -81,11 +81,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/EventStats'
 
-  /events/energy-consumption/ids:
+  /event_ids/energy-consumption:
     get:
       summary: Retrieve event IDs and trace IDs for energy consumption events
-      description: |
-        Returns all event IDs and trace IDs from the `energy-consumption` Kafka topic.
+      description: Gets event ID and trace ID for each chat event from queue
       operationId: app.get_energy_consumption_ids
       responses:
         '200':
@@ -95,25 +94,12 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    event_id:
-                      type: string
-                      description: The unique ID for the event.
-                      example: "123e4567-e89b-12d3-a456-426614174000"
-                    trace_id:
-                      type: string
-                      description: The unique trace ID for the event.
-                      example: "trace-id-1"
-        '400':
-          description: Invalid request
-        '500':
-          description: Internal server error
-  /events/solar-generation/ids:
+                  $ref: "#/components/schemas/EventIds"
+
+  /event_ids/solar-generation:
     get:
       summary: Retrieve event IDs and trace IDs for solar generation events
-      description: |
-        Returns all event IDs and trace IDs from the `solar-generation` Kafka topic.
+      description: Gets event ID and trace ID for each donation event from queue
       operationId: app.get_solar_generation_ids
       responses:
         '200':
@@ -123,73 +109,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    event_id:
-                      type: string
-                      description: The unique ID for the event.
-                      example: "123e4567-e89b-12d3-a456-426614174001"
-                    trace_id:
-                      type: string
-                      description: The unique trace ID for the event.
-                      example: "trace-id-2"
-        '400':
-          description: Invalid request
-        '500':
-          description: Internal server error
-
-  /events/count:
-    get:
-      summary: Get event counts from the Kafka queue
-      operationId: app.get_event_counts
-      responses:
-        "200":
-          description: Successfully retrieved event counts
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  energy_consumption:
-                    type: integer
-                  solar_generation:
-                    type: integer
-        "500":
-          description: Internal server error
-
-  /events/ids:
-    get:
-      summary: Get event IDs and trace IDs from the Kafka queue
-      operationId: app.get_event_ids
-      responses:
-        "200":
-          description: Successfully retrieved event IDs and trace IDs
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  energy_consumption:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        event_id:
-                          type: integer
-                        trace_id:
-                          type: string
-                  solar_generation:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        event_id:
-                          type: integer
-                        trace_id:
-                          type: string
-        "500":
-          description: Internal server error
-                
+                  $ref: "#/components/schemas/EventIds"                
 components:
   schemas:
     EnergyConsumptionEvent:
@@ -226,6 +146,7 @@ components:
           format: uuid
           description: Unique identifier for the trace
           example: "123e4567-e89b-12d3-a456-426614174000"
+
     SolarGenerationEvent:
       type: object
       required:
@@ -271,3 +192,18 @@ components:
           type: integer  
           description: Number of solar generation events  
           example: 50
+
+    EventIds:
+      type: object
+      required:
+        - event_id
+        - trace_id
+      properties:
+        event_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        trace_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851

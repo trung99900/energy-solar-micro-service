@@ -1,5 +1,20 @@
-logs
-data/kafka
-data/processing
-data/consistency_check
-*prod.yml
+# services
+logs/
+data/kafka/*
+data/processing/*
+config/*/*prod.yml
+
+# terraform
+deployment/terraform/.terraform/
+deployment/terraform/.terraform.lock.hcl
+deployment/terraform/*.tfstate
+deployment/terraform/*.tfstate.backup
+deployment/terraform/*.plan
+deployment/terraform/terraform.tfvars
+deployment/terraform/terraform.tfvars.json
+
+# ansible
+deployment/ansible/files/
+
+deployment/scripts/key_data
+.env

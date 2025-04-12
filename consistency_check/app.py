@@ -17,6 +17,15 @@ with open('config/log_conf_dev.yml', 'r') as f:
 
 logger = logging.getLogger('basicLogger')
 
+def request(method, url):
+    event_data = None
+    response = httpx.request(method, url)
+    if response.status_code != 200:
+        logger.error(f"Request for {url} events failed: {response.status_code}")
+    else:
+        event_data = json.loads(response.content.decode("utf-8"))
+        logger.info(f"Request for {url} was successful")
+    return event_data
 
 def update_consistency_check():
     """Perform consistency checks for event counts and IDs across services."""
@@ -25,9 +34,9 @@ def update_consistency_check():
 
     try:
         # Fetch counts and IDs from services
-        processing_stats = requests.get(f"{app_config['processing']['url']}/events/count").json()
-        analyzer_stats = requests.get(f"{app_config['analyzer']['url']}/events/count").json()
-        analyzer_ids = requests.get(f"{app_config['analyzer']['url']}/events/ids").json()
+        processing_stats = requests("GET", f"{app_config['processing']['url']}/stats")
+        analyzer_stats = requests("GET", f"{app_config['analyzer']['url']}/stats")
+        analyzer_ids = requests("GET", f"{app_config['analyzer']['url']}/events/ids").json()
         storage_stats = requests.get(f"{app_config['storage']['url']}/events/count").json()
         storage_ids = requests.get(f"{app_config['storage']['url']}/events/ids").json()
         logger.info("Successfully fetched stats from services.")

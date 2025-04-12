@@ -1,11 +1,12 @@
-processing:  
-  url: "http://processing:8100"
-analyzer:
-  url: "http://analyzer:8110"
-storage:
-  url: "http://storage:8090"
+version: 1
 datastore:
-  filename: "data/consistency_check.json"
+  filename: data/consistency_check.json
+processing:
+  url: http://processing:8100/processing
+analyzer:
+  url: http://analyzer:8110/analyzer
+storage:
+  url: http://storage:8090/storage
 
 events:
   hostname: kafka

@@ -8,8 +8,8 @@ services:
   kafka:
     image: wurstmeister/kafka
     command: [start-kafka.sh]
-    ports:
-      - "9092:9092"
+    # ports:
+    #   - "9092:9092"
     environment:
       KAFKA_CREATE_TOPICS: "energy_consumption:1:1,solar_generation:1:1" # Two topics
       KAFKA_ADVERTISED_HOST_NAME: kafka
@@ -78,7 +78,7 @@ services:
     environment:
       CORS_ALLOW_ALL: no # Change to yes if you want to allow all requests
     ports:
-      - "8100:8100"
+      - "8100"
     depends_on:
       - "storage"
     volumes:
@@ -94,7 +94,7 @@ services:
     environment:
       CORS_ALLOW_ALL: no # Change to yes if you want to allow all requests
     ports:
-      - "8110:8110"
+      - "8110"
     depends_on:
       - "kafka"
     volumes:
@@ -136,19 +136,15 @@ services:
       context: ./consistency_check
       dockerfile: dockerfile
     ports:
-      - "8120:8120"
+      - "8120"
     depends_on:
       - processing
       - analyzer
       - storage
     volumes:
-      - ./logs:/logs
+      - ./logs:/app/logs
       - ./config/consistency_check:/app/config
       - ./data/consistency_check:/app/data
-      - ./consistency_check/consistency_check.yml:/app/consistency_check.yml
-    environment:  
-      - LOG_CONFIG=app/config/log_conf_dev.yml
-      - APP_CONFIG=app/config/app_conf_dev.yml
 
 # Defines a named volume my-db
 volumes:
