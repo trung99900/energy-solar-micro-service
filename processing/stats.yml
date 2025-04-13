@@ -1,110 +1,59 @@
 openapi: 3.0.0
-info:  
+info:
   description: This API provides statistics for energy consumption and solar generation.
-  version: 1.0.0  
+  version: 1.0.0
   title: stats API
   contact:
     name: Energy Company
-    email: tnguyen571@my.bcit.ca  
-paths:  
-  /stats:  
+    email: tnguyen571@my.bcit.ca
+paths:
+  /stats:
     get:
+      summary: Retrieve statistics for energy consumption and solar generation
+      description: This endpoint retrieves statistics related to energy consumption and solar generation, including the number of events, maximum values, and the last updated timestamp.
       operationId: app.get_stats
-      responses:  
+      responses:
         '200':
-          description: Successfully retrieved statistics          
-          content:  
+          description: Successfully retrieved statistics
+          content:
             application/json:
-              schema:  
-                type: object  
-                required:  
-                  - num_energy_events  
-                  - max_energy_consumed  
-                  - num_solar_events  
-                  - max_power_generated  
-                  - last_updated  
-                properties:  
-                  num_energy_events:  
-                    type: integer  
-                    example: 5  
-                  max_energy_consumed:  
-                    type: number  
-                    example: 1000  
-                  num_solar_events:  
-                    type: integer  
-                    example: 3  
-                  max_power_generated:  
-                    type: number  
-                    example: 500  
-                  last_updated:  
-                    type: string  
-                    format: date-time  
-                    example: '2021-03-01T12:00:00Z'
-                    
+              schema:
+                type: object
+
         '400':
           description: Invalid request
-          content:  
-            application/json:  
-              schema:  
-                type: object  
-                properties:  
-                  message:  
-                    type: string  
-                  code:  
-                    type: integer
-
-  /events/count:
-    get:
-      summary: Get event counts
-      operationId: app.get_event_counts
-      responses:
-        "200":
-          description: Successfully retrieved event counts
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  energy_consumption:
+                  message:
+                    type: string
+                  code:
                     type: integer
-                  solar_generation:
-                    type: integer
-        "404":
-          description: No statistics available
-        "500":
-          description: Internal server error
-
-  /events/ids:
-    get:
-      summary: Get event IDs and trace IDs
-      operationId: app.get_event_ids
-      responses:
-        "200":
-          description: Successfully retrieved event IDs and trace IDs
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  energy_consumption:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        event_id:
-                          type: integer
-                        trace_id:
-                          type: string
-                  solar_generation:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        event_id:
-                          type: integer
-                        trace_id:
-                          type: string
-        "501":
-          description: Not implemented
-        "500":
-          description: Internal server error
+components:
+  schemas:
+    InteractionStats:
+      required:
+        - num_energy_events
+        - max_energy_consumed
+        - num_solar_events
+        - max_power_generated
+        - last_updated
+      properties:
+        num_energy_events:
+          type: integer
+          example: 5
+        max_energy_consumed:
+          type: number
+          example: 1000
+        num_solar_events:
+          type: integer
+          example: 3
+        max_power_generated:
+          type: number
+          example: 500
+        last_updated:
+          type: string
+          format: date-time
+          example: '2021-03-01T12:00:00Z'

@@ -179,61 +179,60 @@ def setup_kafka_thread():
     t.setDaemon(True)
     t.start()
 
-def get_event_counts():
-    """
-    Endpoint to retrieve the count of events in the database for each type.
-    """
+def get_count():
+    logger.info("get_count")
     session = DBSession()
     try:
-        num_energy_consumption = session.query(func.count(EnergyConsumption.id)).scalar()
-        num_solar_generation = session.query(func.count(SolarGeneration.id)).scalar()
+        energy_consumption_count = select(func.count()).select_from(EnergyConsumption)
+        solar_generation_count = select(func.count()).select_from(SolarGeneration)
 
-        response = {
-            "energy_consumption": num_energy_consumption,
-            "solar_generation": num_solar_generation
+        session.close()
+
+        count = {
+            "energy_consumption_count": energy_consumption_count,
+            "solar_generation_count": solar_generation_count
         }
-
-        logger.info(f"Event counts retrieved successfully: {response}")
-        return jsonify(response), 200
+        logger.info("Count of events: %s", count)
+        return jsonify(count), 200
+    
     except Exception as e:
-        logger.error(f"Error retrieving event counts: {e}")
+        logger.error("Error counting energy consumption events: %s", str(e))
         return {"error": "Internal server error"}, 500
-    finally:
-        session.close()
 
-
-def get_event_ids(event_type):
-    """
-    Retrieves event IDs and trace IDs for a specific event type.
-    """
+def get_energy_consumption_event_ids():
+    """ Get all energy consumption event IDs """
     session = DBSession()
     try:
-        if event_type == "energy-consumption":
-            events = session.query(EnergyConsumption.id, EnergyConsumption.trace_id).all()
-        elif event_type == "solar-generation":
-            events = session.query(SolarGeneration.id, SolarGeneration.trace_id).all()
-        else:
-            return {"error": "Invalid event type"}, 400
-
-        event_ids = [{"event_id": event[0], "trace_id": event[1]} for event in events]
-        logger.info(f"Event IDs retrieved successfully for {event_type}: {len(event_ids)} events")
-        return jsonify(event_ids), 200
+        statement = select(EnergyConsumption.id)
+        results = [
+            result[0]
+            for result in session.execute(statement).scalars().all()
+        ]
+        logger.info("Found %d energy consumption event IDs", len(results))
+        return jsonify(results), 200
     except Exception as e:
-        logger.error(f"Error retrieving event IDs for {event_type}: {e}")
+        logger.error("Error querying energy consumption event IDs: %s", str(e))
         return {"error": "Internal server error"}, 500
     finally:
         session.close()
 
-
-def start_kafka_consumer():
-    """
-    Start a background thread to consume Kafka messages.
-    """
-    thread = Thread(target=process_messages)
-    thread.daemon = True
-    thread.start()
-    logger.info("Kafka consumer thread started.")
-
+def get_solar_generation_event_ids():
+    """ Get all solar generation event IDs """
+    session = DBSession()
+    try:
+        statement = select(SolarGeneration.id)
+        results = [
+            result[0]
+            for result in session.execute(statement).scalars().all()
+        ]
+        logger.info("Found %d solar generation event IDs", len(results))
+        return jsonify(results), 200
+    except Exception as e:
+        logger.error("Error querying solar generation event IDs: %s", str(e))
+        return {"error": "Internal server error"}, 500
+    finally:
+        session.close()
+        
 # Create the Connexion app
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yml", base_path="/storage", strict_validation=True, validate_responses=True)

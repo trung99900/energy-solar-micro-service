@@ -1,10 +1,7 @@
 from flask import jsonify
 import httpx, json, os, logging.config, yaml, connexion, requests
-from datetime import datetime
+from datetime import datetime, timezone
 import time
-
-from connexion.middleware import MiddlewarePosition
-from starlette.middleware.cors import CORSMiddleware
 
 # Load configuration
 with open('config/app_conf_dev.yml', 'r') as f:
@@ -36,9 +33,12 @@ def update_consistency_check():
         # Fetch counts and IDs from services
         processing_stats = requests("GET", f"{app_config['processing']['url']}/stats")
         analyzer_stats = requests("GET", f"{app_config['analyzer']['url']}/stats")
-        analyzer_ids = requests("GET", f"{app_config['analyzer']['url']}/events/ids").json()
-        storage_stats = requests.get(f"{app_config['storage']['url']}/events/count").json()
-        storage_ids = requests.get(f"{app_config['storage']['url']}/events/ids").json()
+        analyzer_energy_consumption_ids = requests("GET", f"{app_config['analyzer']['url']}/event_ids/energy-consumption") or []
+        analyzer_solar_generation_ids = requests("GET", f"{app_config['storage']['url']}/event_ids/solar-generation") or []
+        storage_stats = requests("GET", f"{app_config['storage']['url']}/count")
+        storage_energy_consumption_ids = requests("GET", f"{app_config['storage']['url']}/event_ids/energy-consumption") or []
+        storage_solar_generation_ids = requests("GET", f"{app_config['storage']['url']}/event_ids/solar-generation") or []
+
         logger.info("Successfully fetched stats from services.")
     except requests.exceptions.RequestException as e:
         logger.error(f"Error during HTTP request to services: {e}")
@@ -47,17 +47,30 @@ def update_consistency_check():
         logger.error(f"Error decoding JSON response from services: {e}")
         return {"message": "Error parsing JSON from services"}, 500
 
-    # Compare IDs
-    missing_in_db = [event for event in analyzer_ids if event not in storage_ids]
-    missing_in_queue = [event for event in storage_ids if event not in analyzer_ids]
+    # process counts
+    queue_counts = {
+        "energy_consumption_count": analyzer_stats["num_energy_consumption"],
+        "solar_generation_count": analyzer_stats["num_solar_generation"],
+    }
+    processing_count = {
+        "energy_consumption_count": processing_stats["num_energy_consumption"],
+        "solar_generation_count": processing_stats["num_solar_generation"],
+    }
+
+    # Compare
+    analyzer_events_ids = analyzer_energy_consumption_ids + analyzer_solar_generation_ids
+    storage_events_ids = storage_energy_consumption_ids + storage_solar_generation_ids
+    missing_in_db = [event for event in analyzer_events_ids if event not in storage_events_ids]
+    missing_in_queue = [event for event in storage_events_ids if event not in analyzer_events_ids]
 
     # Save results to JSON file
+    last_updated = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
     results = {
-        "last_updated": datetime.utcnow().isoformat(),
+        "last_updated": last_updated,
         "counts": {
-            "processing": processing_stats,
-            "analyzer": analyzer_stats,
-            "storage": storage_stats,
+            "processing": processing_count,
+            "queue": queue_counts,
+            "db": storage_stats,
         },
         "missing_in_db": missing_in_db,
         "missing_in_queue": missing_in_queue,
@@ -65,7 +78,7 @@ def update_consistency_check():
 
     try:
         with open(app_config['datastore']['filename'], 'w') as f:
-            json.dump(results, f)
+            json.dump(results, f, indent=4)
             logger.info("Results successfully saved to datastore.")
     except IOError as e:
         logger.error(f"Error writing to datastore: {e}")
@@ -78,12 +91,12 @@ def update_consistency_check():
 
     return {"processing_time_ms": processing_time}, 200
 
-
 def get_checks():
     """Fetch the most recent consistency check results."""
     try:
         with open(app_config['datastore']['filename'], 'r') as f:
             results = json.load(f)
+            logger.debug(results)
         return results, 200
     except FileNotFoundError:
         logger.warning("No consistency checks have been run yet.")
@@ -91,7 +104,6 @@ def get_checks():
     except json.JSONDecodeError as e:
         logger.error(f"Error reading JSON from datastore: {e}")
         return {"message": "Error reading results from datastore"}, 500
-
 
 # Create the Connexion app
 app = connexion.FlaskApp(__name__, specification_dir='')
@@ -102,17 +114,6 @@ app.add_api(
     strict_validation=True,
     validate_responses=True
 )
-
-# Add CORS middleware if needed
-if os.getenv("CORS_ALLOW_ALL", "no").lower() == "yes":
-    app.add_middleware(
-        CORSMiddleware,
-        position=MiddlewarePosition.BEFORE_EXCEPTION,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
 
 if __name__ == '__main__':
     app.run(port=8120, host='0.0.0.0')

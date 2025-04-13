@@ -100,13 +100,13 @@ paths:
                 items:
                   $ref: '#/components/schemas/SolarGenerationEvent'
 
-  /stats:
+  /count:
     get:
-      summary: Retrieve event counts from the database
+      summary: Get event counts
       description: |
-        Returns the total number of records for each event type in the database.
-        This includes counts for `energy-consumption` and `solar-generation` events.
-      operationId: app.get_event_counts  # Maps to the "get_event_counts" function
+        Returns the count of energy consumption and solar generation events.
+        This endpoint is useful for monitoring the number of events received.
+      operationId: app.get_count  # Maps to the "get_event_counts" function
       responses:
         '200':
           description: Successfully retrieved event counts
@@ -114,34 +114,15 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  num_energy_consumption:
-                    type: integer
-                    description: Number of energy consumption events stored in the database.
-                    example: 300
-                  num_solar_generation:
-                    type: integer
-                    description: Number of solar generation events stored in the database.
-                    example: 200
-        '500':
-          description: Internal server error
-  /event-ids/{event_type}:
+                $ref: '#/components/schemas/EventCounts'
+
+  /event-ids/energy-consumption:
     get:
       summary: Retrieve event IDs and trace IDs
       description: |
         Returns event IDs and trace IDs for a given event type.
         Two types of events are supported: `energy-consumption` and `solar-generation`.
-      operationId: app.get_event_ids  # Maps to the "get_event_ids" function
-      parameters:
-        - name: event_type
-          in: path
-          required: true
-          description: The type of event (e.g., energy-consumption or solar-generation).
-          schema:
-            type: string
-            enum:
-              - energy-consumption
-              - solar-generation
+      operationId: app.get_energy_consumption_event_ids
       responses:
         '200':
           description: Successfully retrieved event IDs and trace IDs
@@ -150,73 +131,25 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    event_id:
-                      type: string
-                      description: The event's unique identifier.
-                      example: "123e4567-e89b-12d3-a456-426614174000"
-                    trace_id:
-                      type: string
-                      description: The event's trace identifier.
-                      example: "trace-id-1"
-        '400':
-          description: Invalid event type
-        '500':
-          description: Internal server error
+                  $ref: '#/components/schemas/EnergyConsumptionEvent'
 
-  /events/count:
+  /event-ids/solar-generation:
     get:
-      summary: Get event counts from the database
-      operationId: app.get_event_counts
+      summary: Retrieve event IDs and trace IDs
+      description: |
+        Returns event IDs and trace IDs for a given event type.
+        Two types of events are supported: `energy-consumption` and `solar-generation`.
+      operationId: app.get_solar_generation_event_ids
       responses:
-        "200":
-          description: Successfully retrieved event counts
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  energy_consumption:
-                    type: integer
-                  solar_generation:
-                    type: integer
-        "500":
-          description: Internal server error
-
-  /events/ids:
-    get:
-      summary: Get event IDs and trace IDs from the database
-      operationId: app.get_event_ids
-      responses:
-        "200":
+        '200':
           description: Successfully retrieved event IDs and trace IDs
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  energy_consumption:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        event_id:
-                          type: integer
-                        trace_id:
-                          type: string
-                  solar_generation:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        event_id:
-                          type: integer
-                        trace_id:
-                          type: string
-        "500":
-          description: Internal server error
-
+                type: array
+                items:
+                  $ref: '#/components/schemas/SolarGenerationEvent'
+  
 components:
   schemas:
     EnergyConsumptionEvent:
@@ -288,3 +221,30 @@ components:
           format: uuid
           description: Unique identifier for the trace
           example: "123e4567-e89b-12d3-a456-426614174000"
+    EventCount:
+      type: object
+      required:
+        - energy_consumption
+        - solar_generation
+      properties:
+        energy_consumption:
+          type: integer
+          example: 5
+        solar_generation:
+          type: integer
+          example: 3
+
+    EventIds:
+      type: object
+      required:
+        - event_id
+        - trace_id
+      properties:
+        event_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        trace_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
