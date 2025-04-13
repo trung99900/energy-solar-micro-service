@@ -1,4 +1,4 @@
-import connexion, yaml, logging, logging.config, json
+import connexion, yaml, logging, logging.config, json, os
 from connexion import NoContent
 
 from base import Base
@@ -13,30 +13,40 @@ from dateutil import parser
 from sqlalchemy import create_engine, select, func
 from sqlalchemy.orm import sessionmaker
 
+# Load app configuration (fall back to defaults if missing)  
+config_path = os.getenv("APP_CONF", "config/app_conf_dev.yml")
+log_path = os.getenv("LOG_CONF", "config/log_conf_dev.yml")
+
 # Load the configuration from app_conf.yml
-with open('config/app_conf_dev.yml', 'r') as f:
+with open('config_path', 'r') as f:
     app_config = yaml.safe_load(f.read())
 
 # Configure logging
-with open('config/log_conf_dev.yml', 'r') as f:
+with open('log_path', 'r') as f:
     log_config = yaml.safe_load(f.read())
-    print(log_config)
     logging.config.dictConfig(log_config)
 
 logger = logging.getLogger('basicLogger')
 
-# Extract database configuration details from the config file
-db_config = app_config['datastore']
-user = db_config['user']
-password = db_config['password']
-hostname = db_config['hostname']
-port = db_config['port']
-db = db_config['db']
+# Extract database configuration details from environment variables or app config  
+db_user = os.getenv("DB_USER", app_config['datastore'].get('user', 'root'))  
+db_password = os.getenv("DB_PW", app_config['datastore'].get('password', 'password'))  
+db_hostname = os.getenv("DB_HOST", app_config['datastore'].get('hostname', 'db'))  
+db_port = os.getenv("DB_PORT", app_config['datastore'].get('port', '3306'))  
+db_name = os.getenv("DB_NAME", app_config['datastore'].get('db', 'default_db'))
 
-# Create the SQLAlchemy engine using the database configuration
-engine = create_engine(f'mysql://{user}:{password}@{hostname}:{port}/{db}')
-Base.metadata.bind = engine
-DBSession = sessionmaker(bind=engine)
+# Log the DB connection details (without the password)  
+logger.info(f"Connecting to database {db_name} at {db_hostname}:{db_port} as user {db_user}")
+
+# Create the SQLAlchemy engine using the updated configuration  
+try:  
+    engine = create_engine(f'mysql+pymysql://{db_user}:{db_password}@{db_hostname}:{db_port}/{db_name}')  
+    Base.metadata.bind = engine  
+    DBSession = sessionmaker(bind=engine)  
+    logger.info("Database engine created successfully.")  
+except Exception as e:  
+    logger.error(f"Error creating database engine: {e}")  
+    raise e
 
 def process_messages():
     """ Process event messages """
