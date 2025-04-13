@@ -114,7 +114,7 @@ paths:
             application/json:
               schema:
                 type: object
-                items:
+                item:
                   $ref: '#/components/schemas/EventCount'
 
   /event-ids/energy-consumption:
