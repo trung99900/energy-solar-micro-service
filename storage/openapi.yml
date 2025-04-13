@@ -98,7 +98,7 @@ paths:
               schema:
                 type: array
                 items:
-                  # $ref: '#/components/schemas/SolarGenerationEvent'
+                  $ref: '#/components/schemas/SolarGenerationEvent'
 
   /count:
     get:
@@ -114,7 +114,8 @@ paths:
             application/json:
               schema:
                 type: object
-                # $ref: '#/components/schemas/EventCounts'
+                items:
+                  $ref: '#/components/schemas/EventCount'
 
   /event-ids/energy-consumption:
     get:
@@ -131,7 +132,7 @@ paths:
               schema:
                 type: array
                 items:
-                  # $ref: '#/components/schemas/EnergyConsumptionEvent'
+                  $ref: '#/components/schemas/EnergyConsumptionEvent'
 
   /event-ids/solar-generation:
     get:
@@ -148,7 +149,7 @@ paths:
               schema:
                 type: array
                 items:
-                  # $ref: '#/components/schemas/SolarGenerationEvent'
+                  $ref: '#/components/schemas/SolarGenerationEvent'
   
 components:
   schemas:
