@@ -3,13 +3,11 @@ services:
     image: wurstmeister/zookeeper
     volumes: 
       - zookeeper:/opt/zookeeper-3.4.13/data
-    # networks:
-      # - app_network
   kafka:
     image: wurstmeister/kafka
     command: [start-kafka.sh]
-    # ports:
-    #   - "9092:9092"
+    ports:
+      - "9092:9092"
     environment:
       KAFKA_CREATE_TOPICS: "energy_consumption:1:1,solar_generation:1:1" # Two topics
       KAFKA_ADVERTISED_HOST_NAME: kafka
@@ -28,12 +26,13 @@ services:
       # - app_network
   db:  
     image: mysql
-    restart: always  
-    environment:  
+    restart: always
+    environment:
       MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_USER: huutrung
-      MYSQL_PASSWORD: 123456
+      # MYSQL_USER: huutrung
+      # MYSQL_PASSWORD: 123456
       MYSQL_DATABASE: lab04_ConfigLogging
+    env_file: ".env" # Configure MYSQL_USER and MYSQL_PASSWORD based from storage conf
     ports:
       - '3306:3306'
     volumes:
@@ -55,8 +54,6 @@ services:
     volumes:
       - ./logs:/logs
       - ./config/receiver:/app/config
-    # networks:
-      # - app_network
   storage:
     build:
       context: ./storage
@@ -69,8 +66,6 @@ services:
     volumes:
       - ./logs:/logs
       - ./config/storage:/app/config
-    # networks:
-      # - app_network
   processing:
     build:
       context: processing
@@ -85,8 +80,6 @@ services:
       - ./logs:/logs
       - ./config/processing:/app/config
       - ./data/processing:/app/data
-    # networks:
-      # - app_network
   analyzer:
     build:
       context: ./analyzer
@@ -100,22 +93,16 @@ services:
     volumes:
       - ./logs:/logs
       - ./config/analyzer:/app/config
-    # networks:
-      # - app_network
   
   dashboard:
     build:
       context: ./dashboard
-    restart: always
-
-    # volumes:
-    # - ./dashboard:/usr/share/nginx/html
-    # - ./nginx.conf:/etc/nginx/conf.d/default.conf
-    # depends_on:
-    #   - receiver
-    #   - analyzer
-    #   - processing
-    #   - storage
+      dockerfile: dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - analyzer
+      - processing
   
   nginx:
     image: nginx
