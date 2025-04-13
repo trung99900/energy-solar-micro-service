@@ -98,25 +98,25 @@ services:
     build:
       context: ./dashboard
       dockerfile: dockerfile
-    # ports:
-    #   - "80:80"
+    ports:
+      - "80:80"
     depends_on:
       - analyzer
       - processing
   
-  nginx:
-    image: nginx
-    ports:
-      - "80:80"
-    volumes:
-      # - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./dashboard:/usr/share/nginx/html
-    depends_on:
-      - receiver
-      - analyzer
-      - processing
-      - storage
+  # nginx:
+  #   image: nginx
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     # - ./nginx.conf:/etc/nginx/nginx.conf
+  #     - ./nginx.conf:/etc/nginx/conf.d/default.conf
+  #     - ./dashboard:/usr/share/nginx/html
+  #   depends_on:
+  #     - receiver
+  #     - analyzer
+  #     - processing
+  #     - storage
   
   consistency_check:
     build:
