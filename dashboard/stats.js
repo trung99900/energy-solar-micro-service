@@ -73,7 +73,7 @@ const setup = () => {
 
 document.addEventListener('DOMContentLoaded', setup)
 document.getElementById("trigger-check-btn").addEventListener("click", () => {
-    fetch(UPDATE_API_URL, { method: "POST" })
+    fetch(CONSISTENCY_UPDATE_API_URL, { method: "POST" })
         .then(response => response.json())
         .then(data => console.log("Update successful:", data))
         .catch(error => console.error("Error updating:", error));
