@@ -79,9 +79,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                item:
-                  $ref: '#/components/schemas/EventCount'
+                $ref: '#/components/schemas/EventCount'
 
   /event-ids/energy-consumption:
     get:
@@ -191,8 +189,8 @@ components:
     EventCount:
       type: object
       required:
-        - energy_consumption
-        - solar_generation
+        - energy_consumption_count
+        - solar_generation_count
       properties:
         energy_consumption:
           type: integer
