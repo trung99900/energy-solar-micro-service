@@ -58,6 +58,7 @@ services:
     build:
       context: ./storage
       dockerfile: dockerfile
+    env_file: ".env"
     ports:
       - "8090:8090"
     depends_on:
