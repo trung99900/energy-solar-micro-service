@@ -98,8 +98,8 @@ services:
     build:
       context: ./dashboard
       dockerfile: dockerfile
-    ports:
-      - "80:80"
+    # ports:
+    #   - "80:80"
     depends_on:
       - analyzer
       - processing
