@@ -14,11 +14,11 @@ from sqlalchemy import create_engine, select, func
 from sqlalchemy.orm import sessionmaker
 
 # Load the configuration from app_conf.yml  
-with open('config/app_conf.yml', 'r') as f:  
+with open('config/app_conf_dev.yml', 'r') as f:  
     app_config = yaml.safe_load(f.read())  
 
 # Configure logging
-with open('config/log_conf.yml', 'r') as f:
+with open('config/log_conf_dev.yml', 'r') as f:
     log_config = yaml.safe_load(f.read())
     print(log_config)
     logging.config.dictConfig(log_config)
