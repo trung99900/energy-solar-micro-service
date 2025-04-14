@@ -4,7 +4,7 @@ datastore:
   filename: data/processing.json
 
 scheduler:
-  interval: 3
+  interval: 5
 
 eventstores:
   energy_consumption:

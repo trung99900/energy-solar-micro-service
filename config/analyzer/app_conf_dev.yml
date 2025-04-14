@@ -11,7 +11,8 @@ version: 1
 #   topics:
 #     energy_consumption: events
 #     solar_generation: events
-events:
-  hostname: kafka
-  port: 9092
-  topic: events
+kafka:
+  events:
+    hostname: kafka
+    port: 9092
+    topic: events

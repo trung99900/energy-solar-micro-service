@@ -41,9 +41,9 @@ DBSession = sessionmaker(bind=engine)
 def process_messages():
     """ Process event messages """
     # Connect to Kafka
-    kafka_host = f"{app_config['events']['hostname']}:{app_config['events']['port']}"
+    kafka_host = f"{app_config['kafka']['events']['hostname']}:{app_config['kafka']['events']['port']}"
     client = KafkaClient(hosts=kafka_host)
-    topic = client.topics[str.encode(app_config['events']['topic'])]
+    topic = client.topics[str.encode(app_config['kafka']['events']['topic'])]
 
     # Create a consume on a consumer group, that only reads new messages
     # (uncommitted messages) when the service re-starts (i.e., it doesn't

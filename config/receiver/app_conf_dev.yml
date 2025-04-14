@@ -10,7 +10,8 @@
 #   port: 9092
 
 version: 1
-events:
-  hostname: kafka
-  port: 9092
-  topic: events
+kafka: 
+  events:
+    hostname: kafka
+    port: 9092
+    topic: events

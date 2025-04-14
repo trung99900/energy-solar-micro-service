@@ -8,7 +8,8 @@ analyzer:
 storage:
   url: http://storage:8090/storage
 
-events:
-  hostname: kafka
-  port: 9092
-  topic: events
+kafka:
+  events:
+    hostname: kafka
+    port: 9092
+    topic: events

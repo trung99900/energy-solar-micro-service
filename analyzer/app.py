@@ -36,9 +36,9 @@ def get_event(event_type, index):
      
     """
     try:  
-        client = KafkaClient(hosts=f"{app_config['events']['hostname']}:{app_config['events']['port']}")
-        topic = client.topics[app_config["events"]["topic"].encode()]  
-        consumer = topic.get_simple_consumer(reset_offset_on_start=True, consumer_timeout_ms=1000)  
+        client = KafkaClient(hosts=f"{app_config['kafka']['events']['hostname']}:{app_config['kafka']['events']['port']}")
+        topic = client.topics[app_config['kafka']["events"]["topic"].encode()]
+        consumer = topic.get_simple_consumer(reset_offset_on_start=True, consumer_timeout_ms=1000)
         counter = 0  
         for msg in consumer:  
             if msg is None:  
@@ -67,8 +67,8 @@ def get_event_stats():
     """  
     logger.info("Retrieving event statistics")
     try:  
-        client = KafkaClient(hosts=f"{app_config['events']['hostname']}:{app_config['events']['port']}")
-        topic = client.topics[app_config["events"]["topic"].encode()]  
+        client = KafkaClient(hosts=f"{app_config['kafka']['events']['hostname']}:{app_config['kafka']['events']['port']}")
+        topic = client.topics[app_config['kafka']["events"]["topic"].encode()]  
         consumer = topic.get_simple_consumer(reset_offset_on_start=True, consumer_timeout_ms=1000)  
 
         stats = {"num_energy_consumption": 0, "num_solar_generation": 0}  

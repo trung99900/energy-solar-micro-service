@@ -1,8 +1,8 @@
-version: 1  
-datastore:  
-  user: huutrung #DB_USER_PLACEHOLDER
-  password: 123456 #DB_PW_PLACEHOLDER
-  hostname: db #use the service name in the docker-compose file  
+version: 1
+datastore:
+  user: huutrung
+  password: 123456
+  hostname: db
   port: 3306
   db: lab04_ConfigLogging
 
@@ -11,7 +11,8 @@ datastore:
 #   topics:
 #     energy_consumption: events
 #     solar_generation: events
-events:  
-  hostname: kafka #use the service name in the docker-compose file  
-  port: 9092  
-  topic: events
+kask:
+  events:  
+    hostname: kafka
+    port: 9092
+    topic: events

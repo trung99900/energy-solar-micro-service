@@ -20,8 +20,8 @@ def receive_energy_consumption_event(body):
     body["trace_id"] = str(uuid.uuid4())
     body["uuid"] = str(uuid.uuid4())
     # uses the configuration values to connect to Kafka and select the “events” topic
-    client = KafkaClient(hosts=f"{app_config['events']['hostname']}:{app_config['events']['port']}")
-    topic = client.topics[str.encode(app_config['events']['topic'])]
+    client = KafkaClient(hosts=f"{app_config['kafka']['events']['hostname']}:{app_config['kafka']['events']['port']}")
+    topic = client.topics[str.encode(app_config['kafka']['events']['topic'])]
     producer = topic.get_sync_producer()
     # JSON message
     msg = {
@@ -40,8 +40,8 @@ def receive_solar_generation_event(body):
     body["trace_id"] = str(uuid.uuid4())
     body["uuid"] = str(uuid.uuid4())
     
-    client = KafkaClient(hosts=f"{app_config['events']['hostname']}:{app_config['events']['port']}")
-    topic = client.topics[str.encode(app_config['events']['topic'])]
+    client = KafkaClient(hosts=f"{app_config['kafka']['events']['hostname']}:{app_config['kafka']['events']['port']}")
+    topic = client.topics[str.encode(app_config['kafka']['events']['topic'])]
     producer = topic.get_sync_producer()
     msg = {
             "type": "solar-generation",
