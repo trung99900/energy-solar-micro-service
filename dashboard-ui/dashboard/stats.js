@@ -1,14 +1,14 @@
 /* UPDATE THESE VALUES TO MATCH YOUR SETUP */
 
-const PROCESSING_STATS_API_URL = "http://35.182.226.114/processing/stats";
+const PROCESSING_STATS_API_URL = "http://15.156.194.205/processing/stats";
 const ANALYZER_API_URL = {
-    stats: '35.182.226.114/analyzer/stats',
-    energy_consumption: (index) => `35.182.226.114/events/energy-consumption?index=${index}`,
-    solar_generation: (index) => `35.182.226.114/events/solar-generation?index=${index}`,
+    stats: 'http://15.156.194.205/analyzer/stats',
+    energy_consumption: (index) => `http://15.156.194.205/events/energy-consumption?index=${index}`,
+    solar_generation: (index) => `http://15.156.194.205/events/solar-generation?index=${index}`,
 };
 
-const CONSISTENCY_CHECKS_API_URL = '35.182.226.114/consistency_check/checks';
-const CONSISTENCY_UPDATE_API_URL = '35.182.226.114/consistency_check/update';
+const CONSISTENCY_CHECKS_API_URL = 'http://15.156.194.205/consistency_check/checks';
+const CONSISTENCY_UPDATE_API_URL = 'http://15.156.194.205/consistency_check/update';
 
 // Function to generate a random integer for the index parameter  
 const generateRandomIndex = (min = 1, max = 100) => Math.floor(Math.random() * (max - min + 1)) + min;
