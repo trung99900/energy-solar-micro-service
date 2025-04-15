@@ -6,9 +6,9 @@
 
   tasks:
 
-    ### Docker Installation Tasks ###  
+    ### Docker Installation Tasks ###
 
-    # Task 1: Update apt and install dependencies  
+    # Task 1: Update apt and install dependencies
     - name: Install dependencies
       apt:
         pkg:
@@ -27,12 +27,12 @@
         mode: '0755'
 
     # Task 2: Ensure Keyring Directory Exists
-    - name: Ensure /etc/apt/keyrings exists  
-      ansible.builtin.file:  
-        path: /etc/apt/keyrings  
-        state: directory  
-        mode: '0755'  
-    
+    - name: Ensure /etc/apt/keyrings exists
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
     # Task 3: Add GPG key for Docker
     # Currently, the Docker repository is referencing /etc/apt/keyrings/docker.asc improperly. Update the key installation process to use the .gpg keyring file instead to conform to modern best practices.
 
@@ -41,16 +41,16 @@
         url: https://download.docker.com/linux/ubuntu/gpg
         state: present
         keyring: /etc/apt/keyrings/docker.gpg
-    
+
     # Task 4: Add Docker repository
     # Since Docker hasn’t provided official support for Ubuntu 24.04 (Noble Numbat), We can forcibly "trick" Docker's repository into using the configuration for the latest supported version (e.g., jammy for Ubuntu 22.04).
 
     - name: Add Docker repository to apt
-      ansible.builtin.apt_repository:  
-        repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu jammy stable"  
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu jammy stable"
         state: present
 
-    # Task 5: Install Docker  
+    # Task 5: Install Docker
     - name: Install Docker and Docker Compose
       apt:
         pkg:
@@ -61,27 +61,27 @@
         state: latest
         update_cache: yes
 
-    # Task 6: Ensure Docker is running and enabled  
+    # Task 6: Ensure Docker is running and enabled
     - name: Ensure Docker is running and enabled
       service:
         name: docker
         state: started
         enabled: yes
 
-    # Task 7: Ensure group "docker" exists  
+    # Task 7: Ensure group "docker" exists
     - name: Ensure group "docker" exists
       ansible.builtin.group:
         name: docker
         state: present
 
-    # Task 8: Add the ansible user to the Docker group  
+    # Task 8: Add the ansible user to the Docker group
     - name: Add user to Docker group
       user:
         name: "{{ ansible_user }}"
         groups: docker
         append: yes
 
-    ### Application Deployment Tasks ###  
+    ### Application Deployment Tasks ###
 
     - name: Ensure GitHub is a known host
       known_hosts:
@@ -92,13 +92,13 @@
 
     # Task 8: Clone the Git repository and other setup tasks
     - name: Clone the microservices repository
-      git:  
+      git:
         repo: "{{ repo_url }}"
         dest: "/home/{{ ansible_user }}/energy-solar-micro-service"
         version: "{{ repo_branch }}"
         key_file: /home/ubuntu/.ssh/id_ed25519
         force: yes
-    
+
     - name: Create logs directory
       file:
         path: /home/ubuntu/energy-solar-micro-service/logs
@@ -136,39 +136,39 @@
         dest: /home/ubuntu/energy-solar-micro-service/data/processing/processing.json
         mode: '0666'
     # Ensure the Required SQL Files Are Present
-    - name: Copy database initialization script  
-      copy:  
+    - name: Copy database initialization script
+      copy:
         src: ../../data/database/create_tables.sql
-        dest: /home/{{ ansible_user }}/energy-solar-micro-service/data/database/create_tables.sql  
-        owner: ubuntu  
-        group: ubuntu  
+        dest: /home/{{ ansible_user }}/energy-solar-micro-service/data/database/create_tables.sql
+        owner: ubuntu
+        group: ubuntu
         mode: '0644'
 
-    # Task 9: Start the microservices using Docker Compose  
+    # Task 9: Start the microservices using Docker Compose
     - name: Start microservices using Docker Compose
       shell:
         docker compose up -d
       args:
         chdir: "/home/{{ ansible_user }}/energy-solar-micro-service"
 
-       
+
     # -----------------------------------------------------------------
     # Clean Up Existing Docker Key Conflicts
     # SSH into an instance and clean up any previous conflicting Docker configurations.
-    # Clean up related Docker configurations  
-    # sudo rm -rf /etc/apt/keyrings/docker.asc  
-    # sudo rm -rf /etc/apt/keyrings/docker.gpg  
+    # Clean up related Docker configurations
+    # sudo rm -rf /etc/apt/keyrings/docker.asc
+    # sudo rm -rf /etc/apt/keyrings/docker.gpg
 
-    # # Create the keyrings directory again  
-    # sudo mkdir -p /etc/apt/keyrings  
-    # sudo chmod 755 /etc/apt/keyrings  
+    # # Create the keyrings directory again
+    # sudo mkdir -p /etc/apt/keyrings
+    # sudo chmod 755 /etc/apt/keyrings
 
-    # # Add the correct Docker GPG key  
-    # curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg  
+    # # Add the correct Docker GPG key
+    # curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
-    # # Update the repository (use `jammy` codename here explicitly)  
-    # echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu jammy stable" | sudo tee /etc/apt/sources.list.d/docker.list  
+    # # Update the repository (use `jammy` codename here explicitly)
+    # echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu jammy stable" | sudo tee /etc/apt/sources.list.d/docker.list
 
-    # # Update and check for updates  
-    # sudo apt update  
+    # # Update and check for updates
+    # sudo apt update
     # sudo apt list -a docker-ce
