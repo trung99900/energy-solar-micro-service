@@ -41,7 +41,7 @@ const getStats = () => {
     )
 
     // Fetch and update analyzer stats
-    makeReq(ANALYZER_API_URL.stats, (result) =>
+    makeReq(ANALYZER_CHECK_API_URL.stats, (result) =>
         updateCodeDiv(result, "analyzer-stats")
     )
 
@@ -58,7 +58,7 @@ const getStats = () => {
     )
 
     // Fetch and update consistency checks results
-    makeReq(CONSISTENCY_CHECK_API_URLS.checks, (result) =>
+    makeReq(CONSISTENCY_CHECK_API_URL.checks, (result) =>
         updateCodeDiv(result, "consistency-checks")
     )
 }
