@@ -57,6 +57,7 @@ main {
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease;
+    word-wrap: break-word;
 }
 
 .card:hover {
@@ -87,4 +88,33 @@ footer {
     text-align: center;
     font-size: 0.9rem;
     color: #888;
+}
+
+/* Consistency Check Section */
+#consistency-checks {
+    margin-top: 30px;
+}
+
+#consistency-checks h2 {
+    margin-bottom: 15px;
+}
+
+#consistency-checks .card {
+    margin-top: 15px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
 }

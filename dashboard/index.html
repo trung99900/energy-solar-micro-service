@@ -18,41 +18,7 @@
             <img src="./solar-energy-logo.jpg" alt="Solar Logo" />
             <h1>Dashboard</h1>
             <h5 id="last-updated">Last update: <span id="last-updated-value">N/A</span></h5>
-        </div>
-
-        <!-- Consistency Check Controls -->
-        <section id="consistency-checks">
-            <h2>Manage Consistency Checks</h2>
-            <!-- Trigger Check -->
-            <button id="trigger-check-btn">Run Consistency Check</button>
-        </section>
-
-        <!-- Consistency Results -->
-        <section id="consistency-results">
-            <h2>Latest Consistency Check Results</h2>
-            <div id="check-results">
-                <div class="card">
-                    <h3>Database Counts</h3>
-                    <pre id="db-stats">N/A</pre>
-                </div>
-                <div class="card">
-                    <h3>Queue Counts</h3>
-                    <pre id="queue-stats">N/A</pre>
-                </div>
-                <div class="card">
-                    <h3>Processing Counts</h3>
-                    <pre id="processing-stats-result">N/A</pre>
-                </div>
-                <div class="card">
-                    <h3>Missing in Database</h3>
-                    <pre id="missing-in-db">N/A</pre>
-                </div>
-                <div class="card">
-                    <h3>Missing in Queue</h3>
-                    <pre id="missing-in-queue">N/A</pre>
-                </div>
-            </div>
-        </section>
+        </div>        
 
         <!-- Statistics Section -->
         <h2>Statistics</h2>
@@ -78,12 +44,20 @@
                 <h3>Solar Generation</h3>
                 <code id="event-solar-generation">Placeholder value - solar generation events will appear here</code>
             </div>
-        </div>
+        </div>        
 
-        <!-- Messages/Error Log -->  
-        <div id="messages" style="display: none;">  
-            <!-- Error messages will appear here -->  
-        </div>
+        <!-- Consistency Check Controls -->
+        <section id="consistency-checks">
+            <h2>Manage Consistency Checks</h2>
+            <!-- Trigger Check -->
+            <div class="card">
+                <button id="update" class="btn-primary">Update Consistency Check</button>
+            </div>
+            <div class="card">
+                <h3>Result</h3>
+                <code id="consistency-check">Placeholder value - consistency check results will appear here</code>
+            </div>            
+        </section>        
 
         <!-- Footer -->
         <footer>
