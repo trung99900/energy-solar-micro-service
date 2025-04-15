@@ -73,7 +73,7 @@ components:
           type: object
           properties:
             db:
-              type: integer
+              type: object
               properties:
                 energy-consumption:
                   type: integer
@@ -86,22 +86,22 @@ components:
               type: object
               properties:
                 energy-consumption:
-                  type: string
+                  type: integer
                   description: Count of energy generation events in the queue.
                 solar-generation:
-                  type: string
+                  type: integer
                   description: Count of solar generation events in the queue.
-                type: string
+                type: integer
             processing:
               type: object
               properties:
                 energy-consumption:
-                  type: string
+                  type: integer
                   description: Count of energy generation events in the processing service.
                 solar-generation:
-                  type: string
+                  type: integer
                   description: Count of solar generation events in the processing service.
-                type: string
+                type: integer
         missing_in_db:
           type: array
           description: List of events present in the queue but missing from the database.
