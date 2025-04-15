@@ -7,7 +7,7 @@ const ANALYZER_API_URL = {
     solar_generation: (index) => `http://15.156.194.205/events/solar-generation?index=${index}`,
 };
 
-const CONSISTENCY_CHECKS_API_URL = 'http://15.156.194.205/consistency_check/checks';
+const CONSISTENCY_CHECK_API_URL = 'http://15.156.194.205/consistency_check/checks';
 const CONSISTENCY_UPDATE_API_URL = 'http://15.156.194.205/consistency_check/update';
 
 // Function to generate a random integer for the index parameter  
@@ -59,7 +59,7 @@ const getStats = () => {
 
     // Fetch and update consistency checks results
     makeReq(CONSISTENCY_CHECK_API_URL.checks, (result) =>
-        updateCodeDiv(result, "consistency-checks")
+        updateCodeDiv(result, "consistency-check")
     )
 }
 
@@ -80,13 +80,23 @@ const updateErrorMessages = (message) => {
 const setup = () => {
     getStats()
     setInterval(() => getStats(), 4000) // Update every 4 seconds
+
+    const updateBtn = document.getElementById("update")  
+    if (updateBtn) {  
+        updateBtn.addEventListener("click", () => {  
+            fetch(CONSISTENCY_UPDATE_API_URL, { method: "POST" })  
+                .then(response => response.json())  
+                .then(data => console.log("Update successful:", data))  
+                .catch(error => console.error("Error updating:", error));  
+        });
+    }
 }
 
 document.addEventListener('DOMContentLoaded', setup)
 
-document.getElementById("update").addEventListener("click", () => {
-    fetch(CONSISTENCY_UPDATE_API_URL, { method: "POST" })
-        .then(response => response.json())
-        .then(data => console.log("Update successful:", data))
-        .catch(error => console.error("Error updating:", error));
-});
+// document.getElementById("update").addEventListener("click", () => {
+//     fetch(CONSISTENCY_UPDATE_API_URL, { method: "POST" })
+//         .then(response => response.json())
+//         .then(data => console.log("Update successful:", data))
+//         .catch(error => console.error("Error updating:", error));
+// });
