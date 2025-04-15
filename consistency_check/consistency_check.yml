@@ -28,7 +28,7 @@ paths:
                 type: object
                 properties:
                   processing_time_ms:
-                    type: integer
+                    type: string
 
   /checks:
     get:
@@ -76,32 +76,32 @@ components:
               type: object
               properties:
                 energy-consumption:
-                  type: integer
+                  type: string
                   description: Count of energy generation events in the database.
                 solar-generation:
-                  type: integer
+                  type: string
                   description: Count of solar generation events in the database.
-                type: integer
+                type: string
             queue:
               type: object
               properties:
                 energy-consumption:
-                  type: integer
+                  type: string
                   description: Count of energy generation events in the queue.
                 solar-generation:
-                  type: integer
+                  type: string
                   description: Count of solar generation events in the queue.
-                type: integer
+                type: string
             processing:
               type: object
               properties:
                 energy-consumption:
-                  type: integer
+                  type: string
                   description: Count of energy generation events in the processing service.
                 solar-generation:
-                  type: integer
+                  type: string
                   description: Count of solar generation events in the processing service.
-                type: integer
+                type: string
         missing_in_db:
           type: array
           description: List of events present in the queue but missing from the database.
@@ -109,7 +109,7 @@ components:
             type: object
             properties:
               event_id:
-                type: integer
+                type: string
                 format: uuid
                 example: 123e4567-e89b-12d3-a456-426614174000
               trace_id:
@@ -122,7 +122,7 @@ components:
             type: object
             properties:
               event_id:
-                type: integer
+                type: string
                 format: uuid
                 example: 123e4567-e89b-12d3-a456-426614174000
               trace_id:
