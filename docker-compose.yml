@@ -124,7 +124,7 @@ services:
       - analyzer
       - storage
     volumes:
-      - ./logs:/app/logs
+      - ./logs:/logs
       - ./config/consistency_check:/app/config
       - ./data/consistency_check:/app/data
 
