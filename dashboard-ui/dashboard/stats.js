@@ -5,7 +5,7 @@ const CONSISTENCY_CHECK_API_URL = 'http://3.96.198.236/consistency_check/checks'
 const CONSISTENCY_UPDATE_API_URL = 'http://3.96.198.236/consistency_check/update';
 
 // Function to generate a random integer for the index parameter
-const generateRandomIndex = Math.floor(Math.random() * 10);
+const generateRandomIndex = () => Math.floor(Math.random() * 10);
 
 const ANALYZER_API_URL = {
     stats: 'http://3.96.198.236/analyzer/stats',
