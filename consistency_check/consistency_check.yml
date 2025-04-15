@@ -73,13 +73,13 @@ components:
           type: object
           properties:
             db:
-              type: object
+              type: integer
               properties:
                 energy-consumption:
-                  type: string
+                  type: integer
                   description: Count of energy generation events in the database.
                 solar-generation:
-                  type: string
+                  type: integer
                   description: Count of solar generation events in the database.
                 type: string
             queue:
