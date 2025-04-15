@@ -1,18 +1,18 @@
 /* UPDATE THESE VALUES TO MATCH YOUR SETUP */
 
 // const PROCESSING_STATS_API_URL = "http://3.99.189.212:8100/stats"
-const PROCESSING_STATS_API_URL = "http://35.182.156.12/processing/stats";
+const PROCESSING_STATS_API_URL = "/processing/stats";
 
 // Function to generate a random integer for the index parameter  
 const generateRandomIndex = (min = 1, max = 100) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 const ANALYZER_API_URL = {
     // stats: "http://3.99.189.212:8110/stats",
-    stats: 'http://35.182.156.12/analyzer/stats',
+    stats: '/analyzer/stats',
     // energy_consumption: "http://3.99.189.212:8110/events/energy-consumption",
-    energy_consumption: 'http://35.182.156.12/analyzer/events/energy-consumption?index=${generateRandomIndex()}',
+    energy_consumption: '/analyzer/events/energy-consumption?index=${generateRandomIndex()}',
     // solar_generation: "http://3.99.189.212:8110/events/solar-generation"
-    solar_generation: 'http://35.182.156.12/analyzer/events/solar-generation=index=${generateRandomIndex()}'
+    solar_generation: '/analyzer/events/solar-generation=index=${generateRandomIndex()}'
 }
 
 const CONSISTENCY_CHECKS_API_URL = 'http://35.182.156.12/consistency_check/checks';
