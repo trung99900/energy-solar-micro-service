@@ -7,9 +7,12 @@ from solar_generation import SolarGeneration
 from flask import jsonify
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
+from pykafka.exceptions import KafkaException
 
 from threading import Thread
 from dateutil import parser
+import random
+import time
 from sqlalchemy import create_engine, select, func
 from sqlalchemy.orm import sessionmaker
 
@@ -37,6 +40,84 @@ db = db_config['db']
 engine = create_engine(f'mysql://{user}:{password}@{hostname}:{port}/{db}')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
+
+class KafkaWrapper:
+    """ Kafka wrapper for consumer """
+    def __init__(self, hostname, topic):
+        self.hostname = hostname
+        self.topic = topic
+        self.client = None
+        self.consumer = None
+        self.connect()
+
+    def connect(self):
+        """Infinite loop: will keep trying"""
+        while True:
+            logger.debug("Trying to connect to Kafka...")
+            if self.make_client():
+                if self.make_consumer():
+                    break
+            # Sleeps for a random amount of time (0.5 to 1.5s)
+            time.sleep(random.randint(500, 1500) / 1000)
+
+    def make_client(self):
+        """
+        Runs once, makes a client and sets it on the instance.
+        Returns: True (success), False (failure)
+        """
+        if self.client is not None:
+            return True
+        try:
+            self.client = KafkaClient(hosts=self.hostname)
+            logger.info("Kafka client created!")
+            return True
+        except KafkaException as e:
+            msg = f"Kafka error when making client: {e}"
+            logger.warning(msg)
+            self.client = None
+            self.consumer = None
+            return False
+
+    def make_consumer(self):
+        """
+        Runs once, makes a consumer and sets it on the instance.
+        Returns: True (success), False (failure)
+        """
+        if self.consumer is not None:
+            return True
+        if self.client is None:
+            return False
+        try:
+            topic = self.client.topics[str.encode(self.topic)]
+            self.consumer = topic.get_simple_consumer(
+                consumer_group=b'event_group',
+                reset_offset_on_start=False,
+                auto_offset_reset=OffsetType.LATEST
+            )
+            logger.info("Kafka consumer created")
+        except KafkaException as e:
+            msg = f"Make error when making consumer: {e}"
+            logger.warning(msg)
+            self.client = None
+            self.consumer = None
+            return False
+
+    def messages(self):
+        """Generator method that catches exceptions in the consumer loop"""
+        if self.consumer is None:
+            self.connect()
+        while True:
+            try:
+                for msg in self.consumer:
+                    yield msg
+            except KafkaException as e:
+                msg = f"Kafka issue in consumer: {e}"
+                logger.warning(msg)
+                self.client = None
+                self.consumer = None
+                self.connect()
+
+kafka_wrapper = KafkaWrapper(f"{app_config['kafka']['events']['hostname']}:{app_config['kafka']['events']['port']}", app_config['kafka']['events']['topic'])
 
 def process_messages():
     """ Process event messages """

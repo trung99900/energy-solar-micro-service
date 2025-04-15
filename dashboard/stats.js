@@ -1,24 +1,19 @@
 /* UPDATE THESE VALUES TO MATCH YOUR SETUP */
 
-// const PROCESSING_STATS_API_URL = "http://3.99.189.212:8100/stats"
 const PROCESSING_STATS_API_URL = "/processing/stats";
+const ANALYZER_API_URL = {
+    stats: '/analyzer/stats',
+    energy_consumption: (index) => `/events/energy-consumption?index=${index}`,
+    solar_generation: (index) => `/events/solar-generation?index=${index}`,
+};
+
+const CONSISTENCY_CHECKS_API_URL = '/consistency_check/checks';
+const CONSISTENCY_UPDATE_API_URL = '/consistency_check/update';
 
 // Function to generate a random integer for the index parameter  
 const generateRandomIndex = (min = 1, max = 100) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-const ANALYZER_API_URL = {
-    // stats: "http://3.99.189.212:8110/stats",
-    stats: '/analyzer/stats',
-    // energy_consumption: "http://3.99.189.212:8110/events/energy-consumption",
-    energy_consumption: '/analyzer/events/energy-consumption?index=${generateRandomIndex()}',
-    // solar_generation: "http://3.99.189.212:8110/events/solar-generation"
-    solar_generation: '/analyzer/events/solar-generation=index=${generateRandomIndex()}'
-}
-
-const CONSISTENCY_CHECKS_API_URL = 'http://35.182.156.12/consistency_check/checks';
-const CONSISTENCY_UPDATE_API_URL = 'http://35.182.156.12/consistency_check/update';
-
-// This function fetches and updates the general statistics
+// Helper function to make HTTP requests
 const makeReq = (url, cb) => {
     fetch(url)
         .then(res => res.json())
@@ -30,18 +25,42 @@ const makeReq = (url, cb) => {
         })
 }
 
+// Helper function to update content dynamically
 const updateCodeDiv = (result, elemId) => document.getElementById(elemId).innerText = JSON.stringify(result)
 
+// Helper function to get the current time in locale string format
 const getLocaleDateStr = () => (new Date()).toLocaleString()
 
+// Fetch and display general statistics
 const getStats = () => {
     document.getElementById("last-updated-value").innerText = getLocaleDateStr()
     
-    makeReq(PROCESSING_STATS_API_URL, (result) => updateCodeDiv(result, "processing-stats"))
-    makeReq(ANALYZER_API_URL.stats, (result) => updateCodeDiv(result, "analyzer-stats"))
-    makeReq(ANALYZER_API_URL.energy_consumption, (result) => updateCodeDiv(result, "event-energy-consumption"))
-    makeReq(ANALYZER_API_URL.solar_generation, (result) => updateCodeDiv(result, "event-solar-generation"))    
-    makeReq(CONSISTENCY_CHECKS_API_URL, (result) => updateCodeDiv(result, "consistency-checks"))
+    // Fetch and update processing stats
+    makeReq(PROCESSING_STATS_API_URL, (result) =>
+        updateCodeDiv(result, "processing-stats")
+    )
+
+    // Fetch and update analyzer stats
+    makeReq(ANALYZER_API_URL.stats, (result) =>
+        updateCodeDiv(result, "analyzer-stats")
+    )
+
+    // Fetch and update energy consumption event data by a random index
+    const energyIndex = generateRandomIndex();
+    makeReq(ANALYZER_API_URL.energy_consumption(energyIndex), (result) =>
+        updateCodeDiv(result, "event-energy-consumption")
+    )
+
+    // Fetch and update solar generation event data by a random index
+    const solarIndex = generateRandomIndex();
+    makeReq(ANALYZER_API_URL.solar_generation(solarIndex), (result) =>
+        updateCodeDiv(result, "event-solar-generation")
+    )
+
+    // Fetch and update consistency checks results
+    makeReq(CONSISTENCY_API_URLS.checks, (result) =>
+        updateCodeDiv(result, "consistency-checks")
+    )
 }
 
 const updateErrorMessages = (message) => {

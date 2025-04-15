@@ -22,8 +22,12 @@ services:
       - ./data/kafka:/kafka/logs
     depends_on:
       - "zookeeper"
-    # networks:
-      # - app_network
+    healthcheck:
+      test: ["CMD", "kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
+      timeout: 5s
   db:  
     image: mysql
     restart: always
@@ -32,22 +36,26 @@ services:
       MYSQL_USER: huutrung
       MYSQL_PASSWORD: 123456
       MYSQL_DATABASE: lab04_ConfigLogging
-    env_file: ".env" # Configure MYSQL_USER and MYSQL_PASSWORD based from storage conf
-    ports:
-      - '3306:3306'
+    # ports:
+    #   - '3306:3306'
     volumes:
-      #Where my data will be persisted
       - my-db:/var/lib/mysql
-      - ./data/database:/docker-entrypoint-initdb.d    
+      - ./data/database:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
+      timeout: 5s    
   receiver:
     build:
       context: ./receiver
       dockerfile: dockerfile
     ports:
-      # - "8080:8080"
-      - 8080
+      - "8080"
     depends_on:
-      - "kafka"
+      kafka:
+        condition: service_healthy
     volumes:
       - ./logs:/logs
       - ./config/receiver:/app/config
@@ -55,12 +63,13 @@ services:
     build:
       context: ./storage
       dockerfile: dockerfile
-    env_file: ".env"
     ports:
       - "8090:8090"
     depends_on:
-      - "db"
-      - "kafka"
+      db:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
     volumes:
       - ./logs:/logs
       - ./config/storage:/app/config
@@ -87,7 +96,8 @@ services:
     ports:
       - "8110"
     depends_on:
-      - "kafka"
+      kafka:
+        condition: service_healthy
     volumes:
       - ./logs:/logs
       - ./config/analyzer:/app/config
