@@ -1,17 +1,17 @@
 /* UPDATE THESE VALUES TO MATCH YOUR SETUP */
 
 const PROCESSING_STATS_API_URL = "http://15.156.194.205/processing/stats";
-const ANALYZER_API_URL = {
-    stats: 'http://15.156.194.205/analyzer/stats',
-    energy_consumption: (index) => `http://15.156.194.205/events/energy-consumption?index=${index}`,
-    solar_generation: (index) => `http://15.156.194.205/events/solar-generation?index=${index}`,
-};
-
 const CONSISTENCY_CHECK_API_URL = 'http://15.156.194.205/consistency_check/checks';
 const CONSISTENCY_UPDATE_API_URL = 'http://15.156.194.205/consistency_check/update';
 
 // Function to generate a random integer for the index parameter  
 const generateRandomIndex = (min = 1, max = 100) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+const ANALYZER_API_URL = {
+    stats: 'http://15.156.194.205/analyzer/stats',
+    energy_consumption: (index) => `http://15.156.194.205/events/energy-consumption?index=${generateRandomIndex()}`,
+    solar_generation: (index) => `http://15.156.194.205/events/solar-generation?index=${generateRandomIndex()}`,
+};
 
 // Helper function to make HTTP requests
 const makeReq = (url, cb) => {
@@ -36,31 +36,19 @@ const getStats = () => {
     document.getElementById("last-updated-value").innerText = getLocaleDateStr()
     
     // Fetch and update processing stats
-    makeReq(PROCESSING_STATS_API_URL, (result) =>
-        updateCodeDiv(result, "processing-stats")
-    )
+    makeReq(PROCESSING_STATS_API_URL, (result) => updateCodeDiv(result, "processing-stats"))
 
     // Fetch and update analyzer stats
-    makeReq(ANALYZER_API_URL.stats, (result) =>
-        updateCodeDiv(result, "analyzer-stats")
-    )
+    makeReq(ANALYZER_API_URL.stats, (result) => updateCodeDiv(result, "analyzer-stats"))
 
     // Fetch and update energy consumption event data by a random index
-    const energyIndex = generateRandomIndex();
-    makeReq(ANALYZER_API_URL.energy_consumption(energyIndex), (result) =>
-        updateCodeDiv(result, "event-energy-consumption")
-    )
+    makeReq(ANALYZER_API_URL.energy_consumption, (result) => updateCodeDiv(result, "event-energy-consumption"))
 
     // Fetch and update solar generation event data by a random index
-    const solarIndex = generateRandomIndex();
-    makeReq(ANALYZER_API_URL.solar_generation(solarIndex), (result) =>
-        updateCodeDiv(result, "event-solar-generation")
-    )
+    makeReq(ANALYZER_API_URL.solar_generation, (result) => updateCodeDiv(result, "event-solar-generation"))
 
     // Fetch and update consistency checks results
-    makeReq(CONSISTENCY_CHECK_API_URL.checks, (result) =>
-        updateCodeDiv(result, "consistency-check")
-    )
+    makeReq(CONSISTENCY_CHECK_API_URL.checks, (result) => updateCodeDiv(result, "consistency-check"))
 }
 
 const updateErrorMessages = (message) => {
