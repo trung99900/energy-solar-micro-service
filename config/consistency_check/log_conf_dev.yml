@@ -12,7 +12,7 @@ handlers:
     class: logging.FileHandler  
     level: DEBUG  
     formatter: simple  
-    filename: /logs/analyzer.log
+    filename: /logs/consistency_check.log
 loggers:  
   basicLogger:  
     level: DEBUG  
