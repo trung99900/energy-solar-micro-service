@@ -41,7 +41,7 @@ const getStats = () => {
     )
 
     // Fetch and update analyzer stats
-    makeReq(ANALYZER_CHECK_API_URL.stats, (result) =>
+    makeReq(ANALYZER_API_URL.stats, (result) =>
         updateCodeDiv(result, "analyzer-stats")
     )
 
