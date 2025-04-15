@@ -37,7 +37,14 @@ port = db_config['port']
 db = db_config['db']
 
 # Create the SQLAlchemy engine using the database configuration
-engine = create_engine(f'mysql://{user}:{password}@{hostname}:{port}/{db}')
+engine = create_engine(
+    f'mysql://{user}:{password}@{hostname}:{port}/{db}',
+    pool_size=100,
+    max_overflow=50,
+    pool_recycle=1800,
+    pool_pre_ping=True
+)
+
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 
