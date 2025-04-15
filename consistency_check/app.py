@@ -31,13 +31,13 @@ def update_consistency_check():
 
     try:
         # Fetch counts and IDs from services
-        processing_stats = requests("GET", f"{app_config['processing']['url']}/stats")
-        analyzer_stats = requests("GET", f"{app_config['analyzer']['url']}/stats")
-        analyzer_energy_consumption_ids = requests("GET", f"{app_config['analyzer']['url']}/event_ids/energy-consumption") or []
-        analyzer_solar_generation_ids = requests("GET", f"{app_config['storage']['url']}/event_ids/solar-generation") or []
-        storage_stats = requests("GET", f"{app_config['storage']['url']}/count")
-        storage_energy_consumption_ids = requests("GET", f"{app_config['storage']['url']}/event_ids/energy-consumption") or []
-        storage_solar_generation_ids = requests("GET", f"{app_config['storage']['url']}/event_ids/solar-generation") or []
+        processing_stats = request("GET", f"{app_config['processing']['url']}/stats") or {}
+        analyzer_stats = request("GET", f"{app_config['analyzer']['url']}/stats") or {}
+        analyzer_energy_consumption_ids = request("GET", f"{app_config['analyzer']['url']}/event_ids/energy-consumption") or []
+        analyzer_solar_generation_ids = request("GET", f"{app_config['analyzer']['url']}/event_ids/solar-generation") or []
+        storage_stats = request("GET", f"{app_config['storage']['url']}/count") or {}
+        storage_energy_consumption_ids = request("GET", f"{app_config['storage']['url']}/event_ids/energy-consumption") or []
+        storage_solar_generation_ids = request("GET", f"{app_config['storage']['url']}/event_ids/solar-generation") or []
 
         logger.info("Successfully fetched stats from services.")
     except requests.exceptions.RequestException as e:
@@ -49,12 +49,12 @@ def update_consistency_check():
 
     # process counts
     queue_counts = {
-        "energy_consumption_count": analyzer_stats["num_energy_consumption"],
-        "solar_generation_count": analyzer_stats["num_solar_generation"],
+        "energy-consumption": analyzer_stats.get("num_energy_consumption", 0),
+        "solar-generation": analyzer_stats.get("num_solar_generation", 0)
     }
     processing_count = {
-        "energy_consumption_count": processing_stats["num_energy_consumption"],
-        "solar_generation_count": processing_stats["num_solar_generation"],
+        "energy-consumption": processing_stats.get("num_energy_consumption", 0),
+        "solar-generation": processing_stats.get("num_solar_generation", 0)
     }
 
     # Compare
