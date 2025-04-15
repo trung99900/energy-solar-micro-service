@@ -9,8 +9,8 @@ const generateRandomIndex = (min = 1, max = 100) => Math.floor(Math.random() * (
 
 const ANALYZER_API_URL = {
     stats: 'http://15.156.194.205/analyzer/stats',
-    energy_consumption: (index) => `http://15.156.194.205/events/energy-consumption?index=${index}`,
-    solar_generation: (index) => `http://15.156.194.205/events/solar-generation?index=${index}`,
+    energy_consumption: (index) => `http://15.156.194.205/analyzer/events/energy-consumption?index=${index}`,
+    solar_generation: (index) => `http://15.156.194.205/analyzer/events/solar-generation?index=${index}`,
 };
 
 // Helper function to make HTTP requests
