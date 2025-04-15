@@ -81,7 +81,8 @@ components:
                 solar-generation:
                   type: integer
                   description: Count of solar generation events in the database.
-                type: string
+                type:
+                  type: integer
             queue:
               type: object
               properties:
@@ -91,7 +92,8 @@ components:
                 solar-generation:
                   type: integer
                   description: Count of solar generation events in the queue.
-                type: integer
+                type:
+                  type: integer
             processing:
               type: object
               properties:
@@ -101,7 +103,8 @@ components:
                 solar-generation:
                   type: integer
                   description: Count of solar generation events in the processing service.
-                type: integer
+                type:
+                  type: integer
         missing_in_db:
           type: array
           description: List of events present in the queue but missing from the database.
