@@ -1,16 +1,16 @@
 /* UPDATE THESE VALUES TO MATCH YOUR SETUP */
 
-const PROCESSING_STATS_API_URL = "http://15.156.194.205/processing/stats";
-const CONSISTENCY_CHECK_API_URL = "http://15.156.194.205/consistency_check/checks";
-const CONSISTENCY_UPDATE_API_URL = "http://15.156.194.205/consistency_check/update";
+const PROCESSING_STATS_API_URL = "http://3.96.198.236/processing/stats";
+const CONSISTENCY_CHECK_API_URL = "http://3.96.198.236/consistency_check/checks";
+const CONSISTENCY_UPDATE_API_URL = "http://3.96.198.236/consistency_check/update";
 
 // Function to generate a random integer for the index parameter
 const generateRandomIndex = (min = 1, max = 100) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 const ANALYZER_API_URL = {
-    stats: "http://15.156.194.205/analyzer/stats",
-    energy_consumption: (index) => "http://15.156.194.205/analyzer/events/energy-consumption?index=${index}",
-    solar_generation: (index) => "http://15.156.194.205/analyzer/events/solar-generation?index=${index}",
+    stats: "http://3.96.198.236/analyzer/stats",
+    energy_consumption: (index) => "http://3.96.198.236/analyzer/events/energy-consumption?index=${index}",
+    solar_generation: (index) => "http://3.96.198.236/analyzer/events/solar-generation?index=${index}",
 };
 
 // Helper function to make HTTP requests
