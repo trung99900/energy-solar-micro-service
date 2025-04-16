@@ -77,7 +77,13 @@ def update_consistency_check():
     }
 
     try:
-        with open(app_config['datastore']['filename'], 'w') as f:
+        # Ensure directory exists BEFORE writing  
+        data_file = app_config['datastore']['filename']
+        dir_name = os.path.dirname(data_file)
+        if dir_name:
+            os.makedirs(dir_name, exist_ok=True)
+
+        with open(data_file, 'w') as f:
             json.dump(results, f, indent=4)
             logger.info("Results successfully saved to datastore.")
     except IOError as e:
