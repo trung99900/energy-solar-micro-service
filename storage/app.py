@@ -1,3 +1,8 @@
+from dotenv import load_dotenv
+# Load environment variables from .env file  
+load_dotenv()
+import os
+
 import connexion, yaml, logging, logging.config, json, os
 from connexion import NoContent
 
@@ -30,8 +35,10 @@ logger = logging.getLogger('basicLogger')
 
 # Extract database configuration details from the config file  
 db_config = app_config['datastore']
-user = db_config['user']
-password = db_config['password']
+# user = db_config['user']
+user = os.getenv('DB_USER')
+# password = db_config['password']
+password = os.getenv('DB_PASSWORD')
 hostname = db_config['hostname']
 port = db_config['port']
 db = db_config['db']
