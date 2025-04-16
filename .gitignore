@@ -18,3 +18,4 @@ deployment/ansible/files/
 
 deployment/scripts/key_data
 .env
+.env.js

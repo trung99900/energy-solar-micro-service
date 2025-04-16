@@ -1,7 +1,7 @@
 version: 1
 datastore:
-  user: huutrung
-  password: 123456
+  user: DB_USER
+  password: DB_PASSWORD
   hostname: db
   port: 3306
   db: lab04_ConfigLogging
