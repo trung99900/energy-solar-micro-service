@@ -73,6 +73,8 @@ services:
     volumes:
       - ./logs:/logs
       - ./config/storage:/app/config
+    env_file:
+    - .env
   processing:
     build:
       context: processing
@@ -126,7 +128,7 @@ services:
     volumes:
       - ./logs:/logs
       - ./config/consistency_check:/app/config
-      - ./data/consistency_check:/app/data
+      - ./data/consistency_check:/app/data    
 
 # Defines a named volume my-db
 volumes:
