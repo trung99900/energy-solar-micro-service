@@ -277,8 +277,8 @@ def get_count():
         session.close()
 
         result = {
-            "energy_consumption": energy_consumption_count,
-            "solar_generation": solar_generation_count
+            "energy_consumption_count": energy_consumption_count,
+            "solar_generation_count": solar_generation_count
         }
         logger.info("Count of events: %s", result)
         return jsonify(result), 200
