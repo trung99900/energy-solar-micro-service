@@ -271,17 +271,17 @@ def get_count():
     logger.info("get_count")
     session = DBSession()
     try:
-        energy_consumption_count = select(func.count()).select_from(EnergyConsumption)
-        solar_generation_count = select(func.count()).select_from(SolarGeneration)
+        energy_consumption_count = session.query(func.count(EnergyConsumption.id)).scalar()  
+        solar_generation_count = session.query(func.count(SolarGeneration.id)).scalar()
 
         session.close()
 
-        count = {
-            "energy_consumption_count": energy_consumption_count,
-            "solar_generation_count": solar_generation_count
+        result = {
+            "energy_consumption": energy_consumption_count,
+            "solar_generation": solar_generation_count
         }
-        logger.info("Count of events: %s", count)
-        return jsonify(count), 200
+        logger.info("Count of events: %s", result)
+        return jsonify(result), 200
     
     except Exception as e:
         logger.error("Error counting energy consumption events: %s", str(e))
@@ -291,13 +291,14 @@ def get_energy_consumption_event_ids():
     """ Get all energy consumption event IDs """
     session = DBSession()
     try:
-        statement = select(EnergyConsumption.id)
-        results = [
-            result[0]
-            for result in session.execute(statement).scalars().all()
+        statement = select(EnergyConsumption.id, EnergyConsumption.trace_id)
+        results = session.execute(statement).all()
+        ids = [
+            {"event_id": str(row[0]), "trace_id": str(row[1])}
+            for row in results
         ]
-        logger.info("Found %d energy consumption event IDs", len(results))
-        return jsonify(results), 200
+        logger.info("Found %d energy consumption event IDs", len(ids))
+        return jsonify(ids), 200
     except Exception as e:
         logger.error("Error querying energy consumption event IDs: %s", str(e))
         return {"error": "Internal server error"}, 500
@@ -308,17 +309,18 @@ def get_solar_generation_event_ids():
     """ Get all solar generation event IDs """
     session = DBSession()
     try:
-        statement = select(SolarGeneration.id)
-        results = [
-            result[0]
-            for result in session.execute(statement).scalars().all()
-        ]
-        logger.info("Found %d solar generation event IDs", len(results))
-        return jsonify(results), 200
-    except Exception as e:
-        logger.error("Error querying solar generation event IDs: %s", str(e))
-        return {"error": "Internal server error"}, 500
-    finally:
+        statement = select(SolarGeneration.id, SolarGeneration.trace_id)  
+        results = session.execute(statement).all()  
+        ids = [  
+            {"event_id": str(row[0]), "trace_id": str(row[1])}  
+            for row in results  
+        ]  
+        logger.info("Found %d solar generation event IDs", len(ids))  
+        return jsonify(ids), 200  
+    except Exception as e:  
+        logger.error("Error querying solar generation event IDs: %s", str(e))  
+        return {"error": "Internal server error"}, 500  
+    finally:  
         session.close()
         
 # Create the Connexion app
