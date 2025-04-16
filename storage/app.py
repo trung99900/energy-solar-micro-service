@@ -274,8 +274,6 @@ def get_count():
         energy_consumption_count = session.query(func.count(EnergyConsumption.id)).scalar()  
         solar_generation_count = session.query(func.count(SolarGeneration.id)).scalar()
 
-        session.close()
-
         result = {
             "energy_consumption_count": energy_consumption_count,
             "solar_generation_count": solar_generation_count
