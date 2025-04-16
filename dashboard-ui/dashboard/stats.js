@@ -1,14 +1,14 @@
 /* UPDATE THESE VALUES TO MATCH YOUR SETUP */
 const VM_IP = window.ENV.VM_IP;
-const PROCESSING_STATS_API_URL = 'http://${VM_IP}/processing/stats';
-const CONSISTENCY_CHECK_API_URL = 'http://${VM_IP}/consistency_check/checks';
-const CONSISTENCY_UPDATE_API_URL = 'http://${VM_IP}/consistency_check/update';
+const PROCESSING_STATS_API_URL = `http://${VM_IP}/processing/stats`;
+const CONSISTENCY_CHECK_API_URL = `http://${VM_IP}/consistency_check/checks`;
+const CONSISTENCY_UPDATE_API_URL = `http://${VM_IP}/consistency_check/update`;
 
 // Function to generate a random integer for the index parameter
 const generateRandomIndex = () => Math.floor(Math.random() * 10);
 
 const ANALYZER_API_URL = {
-    stats: 'http://${VM_IP}/analyzer/stats',
+    stats: `http://${VM_IP}/analyzer/stats`,
     energy_consumption: (index) => `http://${VM_IP}/analyzer/events/energy-consumption?index=${index}`,
     solar_generation: (index) => `http://${VM_IP}/analyzer/events/solar-generation?index=${index}`,
 };
