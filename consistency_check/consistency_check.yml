@@ -28,7 +28,7 @@ paths:
                 type: object
                 properties:
                   processing_time_ms:
-                    type: string
+                    type: integer
 
   /checks:
     get:
