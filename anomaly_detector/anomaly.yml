@@ -34,7 +34,7 @@ paths:
           description: Filter by event type (energy_consumption, solar_generation) - shows all anomalies if not provided
           schema:
             type: string
-            example: energy_consumption # CHANGE THIS
+            example: energy-consumption # CHANGE THIS
       responses:
         '200':
           description: Successfully returned a non-empty list of anomalies of the given event type
@@ -47,7 +47,7 @@ paths:
         '204':
           description: No anomalies found for the given event type
         '400':
-          description: Invalid Event Type, must be energy_consumption or solar_generation # CHANGE THIS
+          description: Invalid Event Type, must be energy-consumption or solar-generation # CHANGE THIS
           content:
             application/json:
               schema:

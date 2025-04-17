@@ -25,7 +25,7 @@ KAFKA_PORT = app_config['kafka']['events']['port']
 KAFKA_TOPIC = app_config['kafka']['events']['topic']
 DATASTORE_FILE = app_config['datastore']['filename']
 
-EVENT_TYPES = {"energy_consumption", "solar_generation"}
+EVENT_TYPES = {"energy-consumption", "solar-generation"}
 
 def find_anomalies():
     consumer = KafkaConsumer(
@@ -40,7 +40,7 @@ def find_anomalies():
     for msg in consumer:
         data = msg.value
         evtype = data.get('event_type')
-        if evtype == "energy_consumption":
+        if evtype == "energy-consumption":
             val = data.get('consumption')
             if val is not None and val > ENERGY_CONSUMPTION_MAX:
                 anomaly = {
@@ -53,7 +53,7 @@ def find_anomalies():
                 anomalies.append(anomaly)
                 logger.debug(f"Anomaly detected: {anomaly}")
                 record_id += 1
-        elif evtype == "solar_generation":
+        elif evtype == "solar-generation":
             val = data.get('generation')
             if val is not None and val < SOLAR_GENERATION_MIN:
                 anomaly = {
