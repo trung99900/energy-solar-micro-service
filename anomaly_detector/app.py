@@ -46,7 +46,7 @@ def find_anomalies():
                 anomaly = {
                     "event_id": data.get("event_id"),
                     "trace_id": data.get("trace_id"),
-                    "event_type": "energy_consumption",
+                    "event_type": "energy-consumption",
                     "anomaly_type": "Too High",
                     "description": f"Detected: {val}; too high (threshold {ENERGY_CONSUMPTION_MAX})"
                 }
@@ -59,7 +59,7 @@ def find_anomalies():
                 anomaly = {
                     "event_id": data.get("event_id"),
                     "trace_id": data.get("trace_id"),
-                    "event_type": "solar_generation",
+                    "event_type": "solar-generation",
                     "anomaly_type": "Too Low",
                     "description": f"Detected: {val}; too low (threshold {SOLAR_GENERATION_MIN})"
                 }
