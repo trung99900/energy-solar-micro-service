@@ -1,0 +1,8 @@
+datastore:
+  filename: data/anomalies.json
+
+kafka:
+  events:
+    hostname: kafka
+    port: 9092
+    topic: events

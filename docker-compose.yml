@@ -128,7 +128,24 @@ services:
     volumes:
       - ./logs:/logs
       - ./config/consistency_check:/app/config
-      - ./data/consistency_check:/app/data    
+      - ./data/consistency_check:/app/data
+  
+  anomaly_detector:
+    build:
+      context: ./anomaly_detector
+      dockerfile: dockerfile
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      - ENERGY_CONSUMPTION_MAX=10000 # or your real limit
+      - SOLAR_GENERATION_MIN=10
+    volumes:
+      - ./logs:/logs
+      - ./config/anomaly_detector:/app/config
+      - ./data/anomaly_detector:/app/data
+    ports:
+      - "8130"
 
 # Defines a named volume my-db
 volumes:
