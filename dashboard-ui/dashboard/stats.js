@@ -13,6 +13,11 @@ const ANALYZER_API_URL = {
     solar_generation: (index) => `http://${VM_IP}/analyzer/events/solar-generation?index=${index}`,
 };
 
+const ANOMALY_API_URL = {
+    energy_consumption: `http://${VM_IP}/anomaly_detector/anomalies?event_type=energy-consumption`,  
+    solar_generation: `http://${VM_IP}/anomaly_detector/anomalies?event_type=solar-generation`,
+}
+
 // Helper function to make HTTP requests
 const makeReq = (url, cb) => {
     fetch(url)
@@ -56,7 +61,10 @@ const getStats = () => {
     // Fetch and update consistency checks results
     makeReq(CONSISTENCY_CHECK_API_URL, (result) =>
         updateCodeDiv(result, "consistency-check")
-    )
+    );
+
+    // Add this line for anomaly fetching
+    fetchAndDisplayAnomalies();
 }
 
 const updateErrorMessages = (message) => {
@@ -87,6 +95,50 @@ const setup = () => {
         });
     }
 }
+
+function fetchAndDisplayAnomalies() {
+    fetchAnomalyList(ANOMALY_API_URL.energy_consumption, 'anomaly-energy-consumption');
+    fetchAnomalyList(ANOMALY_API_URL.solar_generation, 'anomaly-solar-generation');
+}
+
+function fetchAnomalyList(url, elementId) {
+    fetch(url)
+        .then((response) => {
+            if (response.status === 204) return []; // No anomalies
+            if (!response.ok) throw new Error(`API error: ${response.status}`);
+            return response.json();
+        })
+        .then((data) => {
+            renderAnomalyList(data, elementId);
+        })
+        .catch((err) => {
+            document.getElementById(elementId).innerHTML = `<li>Error loading anomalies</li>`;
+            updateErrorMessages("Anomaly fetch: " + err.message);
+        });
+}
+
+function renderAnomalyList(list, elementId) {
+    const ul = document.getElementById(elementId);
+    ul.innerHTML = '';
+    if (!list || list.length === 0) {
+        ul.innerHTML = '<li>None</li>';
+        return;
+    }
+    for (const item of list) {
+        // Highlight "Too High" and "Too Low" with appropriate CSS classes
+        const anomalyClass = item.anomaly_type === "Too High"
+            ? "anomaly-high"
+            : (item.anomaly_type === "Too Low" ? "anomaly-low" : "");
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <b><span class="${anomalyClass}">${item.description}</span></b><br>
+            <span>Event ID: ${item.event_id}</span><br>
+            <span>Trace ID: ${item.trace_id}</span>
+        `;
+        ul.appendChild(li);
+    }
+}
+
 
 document.addEventListener('DOMContentLoaded', setup)
 

@@ -34,7 +34,10 @@ paths:
           description: Filter by event type (energy_consumption, solar_generation) - shows all anomalies if not provided
           schema:
             type: string
-            example: energy-consumption # CHANGE THIS
+            enum:
+              - energy-consumption
+              - solar-generation
+            example: energy-consumption
       responses:
         '200':
           description: Successfully returned a non-empty list of anomalies of the given event type
