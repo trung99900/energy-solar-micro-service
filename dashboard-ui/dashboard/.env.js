@@ -1,2 +1,2 @@
 // .env.js
-window.ENV = {VM_IP: "99.79.48.46"}
+window.ENV = {VM_IP: "35.182.7.32"}
